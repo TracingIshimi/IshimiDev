@@ -2,21 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using TMPro;
-using UnityEditor.U2D.Animation;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class StorySystem : MonoBehaviour
 {
     [SerializeField] GameObject convWin;
-    [SerializeField] GameObject nameWin;
+    [SerializeField] GameObject nameWinNPC;
+    [SerializeField] GameObject nameWinPC;
+    [SerializeField] Image charImageNPC;
+    [SerializeField] Image charImagePC;
+    [SerializeField] Image bgImage;
     [SerializeField] TextMeshProUGUI convText;
-    [SerializeField] TextMeshProUGUI nameText;
+    [SerializeField] TextMeshProUGUI nameTextNPC;
+    [SerializeField] TextMeshProUGUI nameTextPC;
     [SerializeField] GameObject choiceWin;
     [SerializeField] Button[] buttons = new Button[4];
 
     private StoryObject storyObject;
+    private SingleScript singleScript;
     private int idx;
+    private CharData charData = new CharData();
 
     class StoryObject{
         SingleScript[] scripts;
@@ -29,17 +35,21 @@ public class StorySystem : MonoBehaviour
     }
     enum ScriptType{
         NARR, 
-        NPC,
-        PC,
+        CHAR,
         CHOICE
     }
     class SingleScript{
         ScriptType type;
         int charNum;
         int spriteNum;
+        int bgimgNum;
         string content;
-        int choiceNum;
+        int choiceNum;  // 갯수: 최저1 최대4
         string[] choice = new string[4];
+        int[] choiceGoto = new int[4];
+        int nextGoto;
+
+        // Getter
         public ScriptType GetScriptType(){
             return type;
         }
@@ -49,8 +59,26 @@ public class StorySystem : MonoBehaviour
         public int GetCharNum(){
             return charNum;
         }
+        public int GetSpriteNum(){
+            return spriteNum;
+        }
+        public int GetBgimgNum(){
+            return bgimgNum;
+        }
+        public int GetChoiceNum(){
+            return choiceNum;
+        }
+        public string GetChoiceContent(int idx){
+            return choice[idx];
+        }
+        public int GetChoiceGoto(int idx){
+            return choiceGoto[idx];
+        }
+        public int GetNextGoto(){
+            return nextGoto;
+        }
     }
-    public void ConvSystem(string fileName){
+    public void InitConvSystem(string fileName){
         string filePath = Const.STORY_PATH_BASE+fileName+".json";
         string jsonStr = File.ReadAllText(filePath);
         storyObject = JsonUtility.FromJson<StoryObject>(jsonStr);
@@ -60,24 +88,37 @@ public class StorySystem : MonoBehaviour
     }
 
     public void NextButton(){
-        idx++;
+        if(singleScript.GetScriptType() != ScriptType.CHOICE && singleScript.GetNextGoto() >= 0){
+            idx = singleScript.GetNextGoto();
+        }
+        else{
+            idx++;
+        }
         SetConv(idx);
+    }
+
+    public void ChoiceButton(int idx){
+        SetConv(singleScript.GetChoiceGoto(idx));
     }
     
     void SetConv(int n){
-        SingleScript singleScript = storyObject.GetScript(n);
+        convWin.SetActive(true);
+        nameWinNPC.SetActive(false);
+        nameWinNPC.SetActive(false);
+        choiceWin.SetActive(false);
+
+        singleScript = storyObject.GetScript(n);
+        bgImage.sprite = Resources.Load<Sprite>(Const.BGIMG_PATH_BASE +singleScript.GetBgimgNum().ToString());
+        
             switch(singleScript.GetScriptType()){
                 case ScriptType.NARR:
-                    SetNarr(n);
+                    SetNarr();
                     break;
-                case ScriptType.NPC:
-                    SetNpc(n);
-                    break;
-                case ScriptType.PC:
-                    SetPc(n);
+                case ScriptType.CHAR:
+                    SetCharDialogue();
                     break;
                 case ScriptType.CHOICE:
-                    SetChoice(n);
+                    SetChoice();
                     break;
                 default:
                     Debug.Log("ERROR: "+n+"th script");
@@ -85,24 +126,30 @@ public class StorySystem : MonoBehaviour
             }
     }
 
-    void SetNarr(int n){
-        nameWin.SetActive(false);
-        convWin.SetActive(true);
-        convText.text = storyObject.GetScript(n).GetContent();
+    void SetNarr(){
+        convText.text = singleScript.GetContent();
     }
 
-    void SetNpc(int n){
-        nameWin.SetActive(true);
-        convWin.SetActive(true);
-        nameText.text = CharData.characterList[n].GetName();
+    void SetCharDialogue(){
+        int charNum = singleScript.GetCharNum();
+        if(charNum==0){
+            nameWinPC.SetActive(true);
+            nameTextPC.text = charData.characterArray[charNum].GetName();
+            charImagePC.sprite = Resources.Load<Sprite>(charData.characterArray[charNum].GetSpriteAddress()+singleScript.GetSpriteNum().ToString());
+        }
+        else{
+            nameWinNPC.SetActive(true);
+            nameTextNPC.text = charData.characterArray[charNum].GetName();
+            charImageNPC.sprite = Resources.Load<Sprite>(charData.characterArray[charNum].GetSpriteAddress()+singleScript.GetSpriteNum().ToString());
+        }
+        convText.text = singleScript.GetContent();
     }
 
-    void SetPc(int n){
-
-    }
-
-    void SetChoice(int n){
-
+    void SetChoice(){
+        choiceWin.SetActive(true);
+        for(int i =0; i<singleScript.GetChoiceNum(); i++){
+            buttons[i].GetComponentInChildren<TextMeshProUGUI>().text = singleScript.GetChoiceContent(i);
+        }
     }
     
 }

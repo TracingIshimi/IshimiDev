@@ -1,0 +1,25 @@
+**스크립트 저장 필드**
+
+1. 전체 Json 파일
+Story Object{
+	SingleScirpt[] scripts;	// 단일 스크립트 배열
+}
+
+2. 단일 스크립트 필드
+Single Script{
+	ScriptType type;	// enum type: 0. NARR, 1. CHAR(캐릭터 대사), 2. CHOICE(선택지)
+	int charNum;	// 발화자 캐릭터. 0번은 주인공
+	int spriteNum;	// 발화자 캐릭터 표정 번호
+	int bgimgNum;	// 배경 이미지 번호
+	string content;	// 대사 내용
+	int choiceNum;	// 선택지 개수
+	string[] choice;	// 각 선택지 스크립트 내용
+	int[] choiceGoto; // 각 선택지 클릭 후 분기 
+	int nextGoto;	// 다음 스크립트 번호
+}
+
+3. 캐릭터 정보
+Character{
+	string name;	// 캐릭터 이름
+	string spriteAddress	// 캐릭터 이미지 베이스 주소(각 이미지 파일명은 0,1,2... 순으로 저장, 0번은 기본 이미지)
+}
