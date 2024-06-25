@@ -1,16 +1,29 @@
 using System.Collections.Generic;
-public static class CharData{
-    public class Character{
-        string name;
-        string spriteAddress;   //베이스 주소
 
-        public string GetName(){
-            return name;
-        }
+public class Character{
+    string name;
+    string spriteAddress;   //베이스 주소
+    public Character(string name, string spriteAddress){
+        this.name = name;
+        this.spriteAddress = spriteAddress;
     }
 
-    public static List<Character> characterList = new List<Character>();
-    
+    public string GetName(){
+        return name;
+    }
 
+    public string GetSpriteAddress(){
+        return spriteAddress;
+    }
+}
+public class CharData{
+    public Character[] characterArray ;
+
+    public CharData(){
+        characterArray = new Character[3];
+        characterArray[0] = new Character("주인공", Const.CHARACTER_PATH_BASE+"PCtemp/");
+        characterArray[1] = new Character("NPC1", Const.CHARACTER_PATH_BASE+"NPCtemp1/");
+        characterArray[2] = new Character("NPC2", Const.CHARACTER_PATH_BASE+"NPCtemp2/");
+    }
 
 }

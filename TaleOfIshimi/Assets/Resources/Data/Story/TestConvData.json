@@ -1,0 +1,70 @@
+{
+    "scripts":[
+        {
+            "type":"0",
+            "charNum": "0",
+            "spriteNum": "0",
+            "bgimgNum": "0",
+            "content":"test script 0: Narration",
+            "choiceNum": "0",
+            "choice":"",
+            "choiceGoto":"[]",
+            "nextGoto": "-1"
+        },
+        {
+            "type":"1",
+            "charNum": "0",
+            "spriteNum": "0",
+            "bgimgNum": "0",
+            "content":"test script 1: PC Dialogue",
+            "choiceNum": "0",
+            "choice":"",
+            "choiceGoto":"",
+            "nextGoto": "-1"
+        },
+        {
+            "type":1,
+            "charNum": 1,
+            "spriteNum": 0,
+            "bgimgNum": 1,
+            "content":"test script 2: NPC Dialogue 1",
+            "choiceNum": 0,
+            "choice":[],
+            "choiceGoto":[],
+            "nextGoto": -1
+        },
+        {
+            "type":1,
+            "charNum": 2,
+            "spriteNum": 0,
+            "bgimgNum": 1,
+            "content":"test script 3: NPC Dialogue 2",
+            "choiceNum": 0,
+            "choice":[],
+            "choiceGoto":[],
+            "nextGoto": 5
+        },
+        {
+            "type":0,
+            "charNum": 0,
+            "spriteNum": 0,
+            "bgimgNum": 0,
+            "content":"test script NULL: Skip Dialogue",
+            "choiceNum": 0,
+            "choice":[],
+            "choiceGoto":[],
+            "nextGoto": -1
+        },
+        {
+            "type":2,
+            "charNum": 0,
+            "spriteNum": 0,
+            "bgimgNum": 0,
+            "content":"test script 4: Choice Window",
+            "choiceNum": 2,
+            "choice":["Choice1: To Start", "Choice2: To Skip Dialogue"],
+            "choiceGoto":[0, 4],
+            "nextGoto": -1
+        }
+    ]
+}
