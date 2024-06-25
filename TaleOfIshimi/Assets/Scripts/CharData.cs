@@ -17,12 +17,13 @@ public class Character{
     }
 }
 public class CharData{
-    public Character[] characterArray = new Character[Const.CHARACTER_MAX_IDX];
+    public Character[] characterArray ;
 
     public CharData(){
+        characterArray = new Character[3];
         characterArray[0] = new Character("주인공", Const.CHARACTER_PATH_BASE+"PCtemp/");
         characterArray[1] = new Character("NPC1", Const.CHARACTER_PATH_BASE+"NPCtemp1/");
-        characterArray[1] = new Character("NPC2", Const.CHARACTER_PATH_BASE+"NPCtemp2/");
+        characterArray[2] = new Character("NPC2", Const.CHARACTER_PATH_BASE+"NPCtemp2/");
     }
 
 }

@@ -4,7 +4,7 @@ using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+using Newtonsoft.Json;
 public class StorySystem : MonoBehaviour
 {
     [SerializeField] GameObject convWin;
@@ -22,10 +22,17 @@ public class StorySystem : MonoBehaviour
     private StoryObject storyObject;
     private SingleScript singleScript;
     private int idx;
-    private CharData charData = new CharData();
+    private CharData charData;
 
+    class JsonObject{
+        public Dictionary<int,Dictionary<string,string>> scripts;
+        public Dictionary<string,string> GetScript(int n){
+            return scripts[n];
+        }
+    }
+    
     class StoryObject{
-        SingleScript[] scripts;
+        public SingleScript[] scripts;
         public SingleScript GetScript(int n){
             return scripts[n];
         }
@@ -33,6 +40,7 @@ public class StorySystem : MonoBehaviour
             return scripts.Length;
         }
     }
+    
     enum ScriptType{
         NARR, 
         CHAR,
@@ -49,7 +57,7 @@ public class StorySystem : MonoBehaviour
         int[] choiceGoto = new int[4];
         int nextGoto;
 
-        // Getter
+        // // Getter
         public ScriptType GetScriptType(){
             return type;
         }
@@ -78,10 +86,18 @@ public class StorySystem : MonoBehaviour
             return nextGoto;
         }
     }
+
+    void Start(){
+        charData = new CharData();
+        InitConvSystem("TestConvData");
+    }
+
     public void InitConvSystem(string fileName){
         string filePath = Const.STORY_PATH_BASE+fileName+".json";
         string jsonStr = File.ReadAllText(filePath);
-        storyObject = JsonUtility.FromJson<StoryObject>(jsonStr);
+        Debug.Log(jsonStr);
+        storyObject = JsonConvert.DeserializeObject<StoryObject>(jsonStr);
+        Debug.Log(storyObject.scripts.Length);
         convWin.SetActive(true);
         idx = 0;
         SetConv(idx);
@@ -94,7 +110,13 @@ public class StorySystem : MonoBehaviour
         else{
             idx++;
         }
-        SetConv(idx);
+        if(idx<storyObject.GetScriptLen()){
+            SetConv(idx);
+        }
+        else{
+            Debug.Log("EOF: Json end");
+        }
+        
     }
 
     public void ChoiceButton(int idx){
@@ -106,18 +128,24 @@ public class StorySystem : MonoBehaviour
         nameWinNPC.SetActive(false);
         nameWinNPC.SetActive(false);
         choiceWin.SetActive(false);
+        charImageNPC.gameObject.SetActive(false);
+        charImagePC.gameObject.SetActive(false);
 
         singleScript = storyObject.GetScript(n);
+        Debug.Log(JsonConvert.SerializeObject(storyObject.GetScript(n)));
         bgImage.sprite = Resources.Load<Sprite>(Const.BGIMG_PATH_BASE +singleScript.GetBgimgNum().ToString());
         
             switch(singleScript.GetScriptType()){
                 case ScriptType.NARR:
+                    Debug.Log(":: SetNarr() Call");
                     SetNarr();
                     break;
                 case ScriptType.CHAR:
+                    Debug.Log(":: SetCharDialogue() Call");
                     SetCharDialogue();
                     break;
                 case ScriptType.CHOICE:
+                    Debug.Log(":: SetChoice() Call");
                     SetChoice();
                     break;
                 default:
@@ -127,6 +155,7 @@ public class StorySystem : MonoBehaviour
     }
 
     void SetNarr(){
+        Debug.Log(singleScript.GetContent());
         convText.text = singleScript.GetContent();
     }
 
@@ -134,11 +163,13 @@ public class StorySystem : MonoBehaviour
         int charNum = singleScript.GetCharNum();
         if(charNum==0){
             nameWinPC.SetActive(true);
+            charImagePC.gameObject.SetActive(true);
             nameTextPC.text = charData.characterArray[charNum].GetName();
             charImagePC.sprite = Resources.Load<Sprite>(charData.characterArray[charNum].GetSpriteAddress()+singleScript.GetSpriteNum().ToString());
         }
         else{
             nameWinNPC.SetActive(true);
+            charImageNPC.gameObject.SetActive(true);
             nameTextNPC.text = charData.characterArray[charNum].GetName();
             charImageNPC.sprite = Resources.Load<Sprite>(charData.characterArray[charNum].GetSpriteAddress()+singleScript.GetSpriteNum().ToString());
         }
