@@ -8,15 +8,15 @@ public class TitleScene : MonoBehaviour
 {
     [SerializeField] GameObject modalPanel;
 
-    public void OnClickStartBtn() {
+    public void SceneChange() {
         SceneManager.LoadScene("1_IdleRoom");
     }
 
-    public void OnClickContinueBtn() {
+    public void ModalPanelOn() {
         modalPanel.SetActive(true);
     }
 
-    public void OnClickNoBtn() {
+    public void ModalPanelOff() {
         modalPanel.SetActive(false);
     }
 }
