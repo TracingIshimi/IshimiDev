@@ -46,11 +46,15 @@ public static class Const{
         {"choice2",5},
         {"choice3",6},
         {"choice4",7},
-        {"goto1",8},
-        {"goto2",9},
-        {"goto3",10},
-        {"goto4",11},
-        {"gotoNULL",12}
+        {"mouse1",8},
+        {"mouse2",9},
+        {"mouse3",10},
+        {"mouse4",11},
+        {"goto1",12},
+        {"goto2",13},
+        {"goto3",14},
+        {"goto4",15},
+        {"gotoNULL",16}
     };
     public static string ITEM_TABLE = "ItemList";
     public static Dictionary<string,int> ITEM_ATTRIBUTE = new Dictionary<string,int>(){
