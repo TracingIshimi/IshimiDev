@@ -21,8 +21,6 @@ public class StorySystem : MonoBehaviour
     [SerializeField] Button[] buttons = new Button[4];
     [SerializeField] TextMeshProUGUI[] buttonTexts = new TextMeshProUGUI[4];
 
-    
-    private IDbConnection dbConnection;
     private int story_max = 0;
     private CharData charData = new CharData();
     private StoryObject storyObject;
@@ -30,112 +28,17 @@ public class StorySystem : MonoBehaviour
     private int currIdx;
     private SingleScript currScript;
 
-    class StoryObject{
-        public SingleScript[] scripts;
-        public StoryObject(int num){
-            scripts = new SingleScript[num];
-        }
-        public void SetScript(int n, SingleScript singleObj){
-            scripts[n] = singleObj;
-        }
-        public SingleScript GetScript(int n){
-            return scripts[n];
-        }
-        public int GetScriptLen(){
-            return scripts.Length;
-        }
-    }
-    
-    enum ScriptType{
-        NARR, 
-        CHAR,
-        CHOICE,
-        ILLUST_FULL,
-        ILLUST_MODAL
-    }
-    class SingleScript{
-        ScriptType type;
-        int charNum;
-        int spriteNum;
-        int bgimgNum;   // 스크립트 타입이 ILLUST_FULL일 경우 일러스트 ID로 사용
-        string content;
-        int nextGoto;
-
-        // 생성자
-        public SingleScript(ScriptType type, int bgimgNum, int charNum, int charImgNum, string content, int nextGoto){
-            this.type = type;
-            this.bgimgNum = bgimgNum;
-            this.charNum = charNum;
-            spriteNum = charImgNum;
-            this.content = content;
-            this.nextGoto = nextGoto;
-        }
-
-        // Getter
-        public ScriptType GetScriptType(){
-            return type;
-        }
-        public string GetContent(){
-            return content;
-        }
-        public int GetCharNum(){
-            return charNum;
-        }
-        public int GetSpriteNum(){
-            return spriteNum;
-        }
-        public int GetBgimgNum(){
-            return bgimgNum;
-        }
-        public int GetNextGoto(){
-            return nextGoto;
-        }
-    }
-
-    class ChoiceScript{
-        int choiceMax;
-        int timer;
-        string[] choice = new string[4];
-        string[] mouseover = new string[4];
-        int[] choiceGoto = new int[5];
-
-        public ChoiceScript(int choiceMax, int timer, string[] choice, string[] mouseover, int[] choiceGoto){
-            this.choiceMax = choiceMax;
-            this.timer = timer;
-            this.choice = choice;
-            this.mouseover = mouseover;
-            this.choiceGoto = choiceGoto;
-        }
-
-        public int GetChoiceMax(){
-            return choiceMax;
-        }
-        public int GetTimer(){
-            return timer;
-        }
-        public string GetChoice(int idx){
-            return choice[idx];
-        }
-        public string GetMouseover(int idx){
-            return mouseover[idx];
-        }
-        public int GetChoiceGoto(int idx){
-            return choiceGoto[idx];
-        }
-
-    }
-
     private void Start(){
         InitConvDB();
         InitConvSystem("TestConvData");
     }
 
     private void InitConvDB(){
-        OpenDBConnection();
+        DBManager.dbManager.OpenDBConnection();
         List<int> charNumList = new List<int>();
 
         // 스크립트 라인 수 가져오기
-        IDbCommand stageCommand = dbConnection.CreateCommand();
+        IDbCommand stageCommand = DBManager.dbManager.dbConnection.CreateCommand();
         //dbCommand.CommandText = "SELECT * FROM "+Const.STAGE_TABLE+" WHERE stage_id = "+StageManager.stageManager.GetStageNum().ToString();
         stageCommand.CommandText = "SELECT * FROM "+Const.STAGE_TABLE+" WHERE stage_id = 0";
         IDataReader stageReader = stageCommand.ExecuteReader();
@@ -148,7 +51,7 @@ public class StorySystem : MonoBehaviour
         
         // 스토리 스크립트 가져오기
         //dbCommand.CommandText = "SELECT * FROM " + Const.STORY_TABLE+" WHERE stage_id = "+StageManager.stageManager.GetStageNum().ToString();
-        IDbCommand scriptCommand = dbConnection.CreateCommand();
+        IDbCommand scriptCommand = DBManager.dbManager.dbConnection.CreateCommand();
         scriptCommand.CommandText = "SELECT * FROM " + Const.STORY_TABLE+" WHERE stage_id = 0";
         IDataReader dataReader = scriptCommand.ExecuteReader();
 
@@ -175,7 +78,7 @@ public class StorySystem : MonoBehaviour
 
         // 선택지 스크립트 가져오기
         //choiceCommand.CommandText = "SELECT * FROM "+Const.CHOICE_TABLE+"WHERE stage_id = "+StageManager.stageManager.GetStageNum().ToString();
-        IDbCommand choiceCommand = dbConnection.CreateCommand();
+        IDbCommand choiceCommand = DBManager.dbManager.dbConnection.CreateCommand();
         choiceCommand.CommandText = "SELECT * FROM "+Const.CHOICE_TABLE+"WHERE stage_id = 0";
         IDataReader choiceReader = scriptCommand.ExecuteReader();
 
@@ -213,7 +116,7 @@ public class StorySystem : MonoBehaviour
         choiceCommand.Dispose();
 
         // 캐릭터 정보 가져오기
-        IDbCommand characCommand = dbConnection.CreateCommand();
+        IDbCommand characCommand = DBManager.dbManager.dbConnection.CreateCommand();
         characCommand.CommandText = "SELECT * FROM "+Const.CHAR_TABLE;
         IDataReader characReader = characCommand.ExecuteReader();
 
@@ -229,19 +132,10 @@ public class StorySystem : MonoBehaviour
         characReader.Close();
         characCommand.Dispose();
         
-        CloseDBConnection();
+        DBManager.dbManager.CloseDBConnection();
     }
 
-    // DB 관련 코드 리팩토링 - 코드 파일 분리 필요
-    private void OpenDBConnection(){
-        string connectionString = "URI=file:"+Application.streamingAssetsPath+Const.DB_NAME;
-        dbConnection = new SqliteConnection(connectionString);
-        dbConnection.Open();
-    }
 
-    private void CloseDBConnection(){
-        dbConnection.Close();
-    }
     public void InitConvSystem(string fileName){
         convWin.SetActive(true);
         currIdx = 0;
