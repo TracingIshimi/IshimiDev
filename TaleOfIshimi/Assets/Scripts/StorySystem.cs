@@ -30,7 +30,7 @@ public class StorySystem : MonoBehaviour
 
     private void Start(){
         InitConvDB();
-        InitConvSystem("TestConvData");
+        InitConvSystem();
     }
 
     private void InitConvDB(){
@@ -79,8 +79,8 @@ public class StorySystem : MonoBehaviour
         // 선택지 스크립트 가져오기
         //choiceCommand.CommandText = "SELECT * FROM "+Const.CHOICE_TABLE+"WHERE stage_id = "+StageManager.stageManager.GetStageNum().ToString();
         IDbCommand choiceCommand = DBManager.dbManager.dbConnection.CreateCommand();
-        choiceCommand.CommandText = "SELECT * FROM "+Const.CHOICE_TABLE+"WHERE stage_id = 0";
-        IDataReader choiceReader = scriptCommand.ExecuteReader();
+        choiceCommand.CommandText = "SELECT * FROM "+Const.CHOICE_TABLE+" WHERE stage_id = 0";
+        IDataReader choiceReader = choiceCommand.ExecuteReader();
 
         while(choiceReader.Read()){
             int scriptId = choiceReader.GetInt32(Const.CHOICE_ATTRIBUTE["script_id"]);
@@ -94,21 +94,32 @@ public class StorySystem : MonoBehaviour
             string[] mouseover = new string[4];
             int[] gotoNum = new int[5];
             for(int i = 0; i<4; i++){
-                if(choiceReader.GetString(choiceAttNum+i) != null){
+                if(!choiceReader.IsDBNull(choiceAttNum+i)){
                     choice[i] = choiceReader.GetString(choiceAttNum+i);
                 }
                 else{
                     choice[i] = "";
                 }
-                if(choiceReader.GetString(mouseAttNum+i) != null){
+                if(!choiceReader.IsDBNull(mouseAttNum+i)){
                     mouseover[i] = choiceReader.GetString(mouseAttNum+i);
                 }
                 else{
                     mouseover[i] = "";
                 }
-                gotoNum[i] = choiceReader.GetInt32(gotoAttNum+i);
+                if(!choiceReader.IsDBNull(gotoAttNum+i)){
+                    gotoNum[i] = choiceReader.GetInt32(gotoAttNum+i);
+                }
+                else{
+                    gotoNum[i] = -1;
+                }
+                
             }
-            gotoNum[4] = choiceReader.GetInt32(gotoAttNum+4);
+            if(!choiceReader.IsDBNull(gotoAttNum+4)){
+                gotoNum[4] = choiceReader.GetInt32(gotoAttNum+4);
+            }
+            else{
+                gotoNum[4] = -1;
+            }
             
             choiceScripts.Add(scriptId,new ChoiceScript(choiceMax,timer,choice,mouseover,gotoNum));
         }
@@ -136,7 +147,7 @@ public class StorySystem : MonoBehaviour
     }
 
 
-    public void InitConvSystem(string fileName){
+    public void InitConvSystem(){
         convWin.SetActive(true);
         currIdx = 0;
         SetConv(currIdx);
@@ -165,7 +176,7 @@ public class StorySystem : MonoBehaviour
     void SetConv(int n){
         convWin.SetActive(true);
         nameWinNPC.SetActive(false);
-        nameWinNPC.SetActive(false);
+        nameWinPC.SetActive(false);
         choiceWin.SetActive(false);
         charImageNPC.gameObject.SetActive(false);
         charImagePC.gameObject.SetActive(false);
@@ -220,5 +231,6 @@ public class StorySystem : MonoBehaviour
             buttons[i].GetComponentInChildren<TextMeshProUGUI>().text = choiceScripts[currIdx].GetChoice(i);
             buttonTexts[i].text = choiceScripts[currIdx].GetMouseover(i);
         }
+        SetNarr();
     }
 }
