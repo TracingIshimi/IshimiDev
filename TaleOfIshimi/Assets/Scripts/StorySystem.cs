@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Mono.Data.Sqlite;
 using System.Data;
 
 public class StorySystem : MonoBehaviour
