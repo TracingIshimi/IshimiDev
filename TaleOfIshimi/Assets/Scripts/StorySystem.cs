@@ -17,6 +17,7 @@ public class StorySystem : MonoBehaviour
     [SerializeField] TextMeshProUGUI nameTextNPC;
     [SerializeField] TextMeshProUGUI nameTextPC;
     [SerializeField] GameObject choiceWin;
+    [SerializeField] GameObject nextButton;
     [SerializeField] Button[] buttons = new Button[4];
     [SerializeField] TextMeshProUGUI[] buttonTexts = new TextMeshProUGUI[4];
 
@@ -169,7 +170,8 @@ public class StorySystem : MonoBehaviour
     }
 
     public void ChoiceButton(int choiceIdx){
-        SetConv(choiceScripts[currIdx].GetChoiceGoto(choiceIdx));
+        currIdx = choiceScripts[currIdx].GetChoiceGoto(choiceIdx);
+        SetConv(currIdx);   
     }
     
     void SetConv(int n){
@@ -177,6 +179,7 @@ public class StorySystem : MonoBehaviour
         nameWinNPC.SetActive(false);
         nameWinPC.SetActive(false);
         choiceWin.SetActive(false);
+        nextButton.SetActive(false);
         charImageNPC.gameObject.SetActive(false);
         charImagePC.gameObject.SetActive(false);
 
@@ -186,10 +189,12 @@ public class StorySystem : MonoBehaviour
             switch(currScript.GetScriptType()){
                 case ScriptType.NARR:
                     Debug.Log(":: SetNarr() Call");
+                    nextButton.SetActive(true);
                     SetNarr();
                     break;
                 case ScriptType.CHAR:
                     Debug.Log(":: SetCharDialogue() Call");
+                    nextButton.SetActive(true);
                     SetCharDialogue();
                     break;
                 case ScriptType.CHOICE:
@@ -197,7 +202,7 @@ public class StorySystem : MonoBehaviour
                     SetChoice();
                     break;
                 default:
-                    Debug.Log("ERROR: "+n+"th script");
+                    Debug.Log("TYPE ERROR: "+n+"th script");
                     break;
             }
     }
@@ -213,22 +218,32 @@ public class StorySystem : MonoBehaviour
             nameWinPC.SetActive(true);
             charImagePC.gameObject.SetActive(true);
             nameTextPC.text = charData.GetCharacter(charNum).GetName();
-            charImagePC.sprite = Resources.Load<Sprite>(charData.GetCharacter(charNum).GetSpriteAddress()+currScript.GetSpriteNum().ToString());
+            charImagePC.sprite = Resources.Load<Sprite>(Const.CHARACTER_PATH_BASE+charData.GetCharacter(charNum).GetSpriteAddress()+"/"+currScript.GetSpriteNum().ToString());
         }
         else{
             nameWinNPC.SetActive(true);
             charImageNPC.gameObject.SetActive(true);
             nameTextNPC.text = charData.GetCharacter(charNum).GetName();
-            charImageNPC.sprite = Resources.Load<Sprite>(charData.GetCharacter(charNum).GetSpriteAddress()+currScript.GetSpriteNum().ToString());
+            charImageNPC.sprite = Resources.Load<Sprite>(Const.CHARACTER_PATH_BASE+charData.GetCharacter(charNum).GetSpriteAddress()+"/"+currScript.GetSpriteNum().ToString());
         }
         convText.text = currScript.GetContent();
     }
 
     void SetChoice(){
         choiceWin.SetActive(true);
+        nextButton.SetActive(false);
+        if(choiceScripts[currIdx].GetTimer()>0){
+            // 타이머 셋팅 코드 -> invoke 재귀함수 사용
+        }
         for(int i =0; i<choiceScripts[currIdx].GetChoiceMax(); i++){
+            buttons[i].gameObject.SetActive(true);
+            buttonTexts[i].gameObject.SetActive(true);
             buttons[i].GetComponentInChildren<TextMeshProUGUI>().text = choiceScripts[currIdx].GetChoice(i);
             buttonTexts[i].text = choiceScripts[currIdx].GetMouseover(i);
+        }
+        for(int j = choiceScripts[currIdx].GetChoiceMax(); j < 4; j++){
+            buttons[j].gameObject.SetActive(false);
+            buttonTexts[j].gameObject.SetActive(false);
         }
         SetNarr();
     }
