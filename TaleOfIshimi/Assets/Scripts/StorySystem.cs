@@ -13,6 +13,7 @@ public class StorySystem : MonoBehaviour
     [SerializeField] Image charImageNPC;
     [SerializeField] Image charImagePC;
     [SerializeField] Image bgImage;
+    [SerializeField] Image modalImage;
     [SerializeField] TextMeshProUGUI convText;
     [SerializeField] TextMeshProUGUI nameTextNPC;
     [SerializeField] TextMeshProUGUI nameTextPC;
@@ -20,13 +21,25 @@ public class StorySystem : MonoBehaviour
     [SerializeField] GameObject nextButton;
     [SerializeField] Button[] buttons = new Button[4];
     [SerializeField] TextMeshProUGUI[] buttonTexts = new TextMeshProUGUI[4];
+    [SerializeField] Slider timerUi;
 
-    private int story_max = 0;
+    private int storyMax = 0;
     private CharData charData = new CharData();
     private StoryObject storyObject;
     private Dictionary<int,ChoiceScript> choiceScripts = new Dictionary<int, ChoiceScript>();
     private int currIdx;
     private SingleScript currScript;
+
+    // Text Effect 관련 변수
+    private bool is_texteff = false;
+    private int effect_cnt;
+    private string completeDialogue;
+
+    // 타이머 변수
+    private float sliderVal;
+    private bool isTimer = false;
+    private float maxTime;
+    private float currTime;
 
     private void Start(){
         InitConvDB();
@@ -43,9 +56,9 @@ public class StorySystem : MonoBehaviour
         stageCommand.CommandText = "SELECT * FROM "+Const.STAGE_TABLE+" WHERE stage_id = 0";
         IDataReader stageReader = stageCommand.ExecuteReader();
         while(stageReader.Read()){
-            story_max = stageReader.GetInt32(Const.STAGE_ATTRIBUTE["story_max"]);
+            storyMax = stageReader.GetInt32(Const.STAGE_ATTRIBUTE["story_max"]);
         }
-        storyObject = new StoryObject(story_max);
+        storyObject = new StoryObject(storyMax);
         stageReader.Close();
         stageCommand.Dispose();
         
@@ -59,6 +72,7 @@ public class StorySystem : MonoBehaviour
             int scriptId = dataReader.GetInt32(Const.STORY_ATTRIBUTE["script_id"]);
             ScriptType type = (ScriptType)dataReader.GetInt32(Const.STORY_ATTRIBUTE["type"]);
             int bgimgNum = dataReader.GetInt32(Const.STORY_ATTRIBUTE["bgimg_num"]);
+            int illustNum = dataReader.GetInt32(Const.STORY_ATTRIBUTE["illust_num"]);
             int charId = dataReader.GetInt32(Const.STORY_ATTRIBUTE["character_id"]);
             int charImgNum = dataReader.GetInt32(Const.STORY_ATTRIBUTE["charimg_num"]);
             string content = dataReader.GetString(Const.STORY_ATTRIBUTE["content"]);
@@ -70,7 +84,7 @@ public class StorySystem : MonoBehaviour
             }
 
             // 스크립트 객체 생성, append
-            storyObject.SetScript(scriptId,new SingleScript(type,bgimgNum,charId,charImgNum,content,nextGoto));
+            storyObject.SetScript(scriptId,new SingleScript(type,bgimgNum,illustNum,charId,charImgNum,content,nextGoto));
             Debug.Log(":: "+scriptId+" :: Content>> "+storyObject.GetScript(scriptId).GetContent());
         }
         dataReader.Close();
@@ -182,6 +196,9 @@ public class StorySystem : MonoBehaviour
         nextButton.SetActive(false);
         charImageNPC.gameObject.SetActive(false);
         charImagePC.gameObject.SetActive(false);
+        modalImage.gameObject.SetActive(false);
+
+        isTimer = false;
 
         currScript = storyObject.GetScript(n);
         bgImage.sprite = Resources.Load<Sprite>(Const.BGIMG_PATH_BASE +currScript.GetBgimgNum().ToString());
@@ -201,6 +218,12 @@ public class StorySystem : MonoBehaviour
                     Debug.Log(":: SetChoice() Call");
                     SetChoice();
                     break;
+                case ScriptType.ILLUST_FULL:
+                    SetFullIllust();
+                    break;
+                case ScriptType.ILLUST_MODAL:
+                    SetModalIllust();
+                    break;
                 default:
                     Debug.Log("TYPE ERROR: "+n+"th script");
                     break;
@@ -209,7 +232,7 @@ public class StorySystem : MonoBehaviour
 
     void SetNarr(){
         Debug.Log(currScript.GetContent());
-        convText.text = currScript.GetContent();
+        TextEffectStart(currScript.GetContent());
     }
 
     void SetCharDialogue(){
@@ -226,7 +249,7 @@ public class StorySystem : MonoBehaviour
             nameTextNPC.text = charData.GetCharacter(charNum).GetName();
             charImageNPC.sprite = Resources.Load<Sprite>(Const.CHARACTER_PATH_BASE+charData.GetCharacter(charNum).GetSpriteAddress()+"/"+currScript.GetSpriteNum().ToString());
         }
-        convText.text = currScript.GetContent();
+        TextEffectStart(currScript.GetContent());
     }
 
     void SetChoice(){
@@ -234,6 +257,9 @@ public class StorySystem : MonoBehaviour
         nextButton.SetActive(false);
         if(choiceScripts[currIdx].GetTimer()>0){
             // 타이머 셋팅 코드 -> invoke 재귀함수 사용
+            isTimer = true;
+            maxTime = choiceScripts[currIdx].GetTimer();
+            currTime = 0;
         }
         for(int i =0; i<choiceScripts[currIdx].GetChoiceMax(); i++){
             buttons[i].gameObject.SetActive(true);
@@ -246,5 +272,71 @@ public class StorySystem : MonoBehaviour
             buttonTexts[j].gameObject.SetActive(false);
         }
         SetNarr();
+    }
+
+    void SetFullIllust(){
+        convWin.SetActive(false);
+        bgImage.sprite = Resources.Load<Sprite>(Const.ILLUST_PATH_BASE +currScript.GetBgimgNum().ToString());
+    }
+
+    void SetModalIllust(){
+        modalImage.gameObject.SetActive(true);
+        modalImage.sprite = Resources.Load<Sprite>(Const.ILLUST_PATH_BASE +currScript.GetIllustNum().ToString());
+        if(currScript.GetCharNum()>=0){
+            SetCharDialogue();
+        }
+        else{
+            SetNarr();
+        }
+    }
+
+    // Text Effect 관련 코드
+    void TextEffectStart(string dialogue){
+        completeDialogue = dialogue;
+        convText.text = "";
+        effect_cnt=0;
+        is_texteff = true;
+        Invoke("TextEffecting",1/Const.TEXT_EFF_SPEED);
+    }
+    void TextEffecting(){
+        if(convText.text==completeDialogue){
+            TextEffectEnd();
+            return;
+        }
+        while(effect_cnt<completeDialogue.Length){
+            convText.text += completeDialogue[effect_cnt];
+            if(completeDialogue[effect_cnt]==' ' || completeDialogue[effect_cnt]=='\n'){
+                effect_cnt++;
+                break;
+            }
+            effect_cnt++;
+        }
+        Debug.Log("End Effecting");
+        Invoke("TextEffecting",1/Const.TEXT_EFF_SPEED);
+    }
+    void TextEffectEnd(){
+        is_texteff = false;
+        convText.text = completeDialogue;
+    }
+    void Update(){
+        if(Input.GetMouseButtonDown(0)){
+            if(is_texteff){
+                CancelInvoke();
+                TextEffectEnd();
+            }
+
+            else if(currScript.GetScriptType()!=ScriptType.CHOICE) {
+                NextButton();
+            }
+        }
+        if(isTimer){
+            currTime+=Time.deltaTime;
+            if(maxTime>=currTime){
+                timerUi.value = 1-(currTime/maxTime);
+            }
+            else{
+                ChoiceButton(Const.CHOICE_ATTRIBUTE["gotoNULL"]-Const.CHOICE_ATTRIBUTE["goto1"]);
+            }
+        }
     }
 }

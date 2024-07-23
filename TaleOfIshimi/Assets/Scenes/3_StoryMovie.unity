@@ -1775,6 +1775,7 @@ MonoBehaviour:
   charImageNPC: {fileID: 993374365}
   charImagePC: {fileID: 1512872696}
   bgImage: {fileID: 1628641901}
+  modalImage: {fileID: 0}
   convText: {fileID: 1318482049}
   nameTextNPC: {fileID: 678342104}
   nameTextPC: {fileID: 658052384}
@@ -1790,6 +1791,7 @@ MonoBehaviour:
   - {fileID: 1894795950}
   - {fileID: 434274940}
   - {fileID: 1055586232}
+  timerUi: {fileID: 101990693}
 --- !u!1 &1170134979
 GameObject:
   m_ObjectHideFlags: 0

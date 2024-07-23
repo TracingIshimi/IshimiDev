@@ -25,14 +25,16 @@
         ScriptType type;
         int charNum;
         int spriteNum;
-        int bgimgNum;   // 스크립트 타입이 ILLUST_FULL일 경우 일러스트 ID로 사용
+        int illustNum;
+        int bgimgNum;
         string content;
         int nextGoto;
 
         // 생성자
-        public SingleScript(ScriptType type, int bgimgNum, int charNum, int charImgNum, string content, int nextGoto){
+        public SingleScript(ScriptType type, int bgimgNum, int illustNum, int charNum, int charImgNum, string content, int nextGoto){
             this.type = type;
             this.bgimgNum = bgimgNum;
+            this.illustNum = illustNum;
             this.charNum = charNum;
             spriteNum = charImgNum;
             this.content = content;
@@ -57,6 +59,9 @@
         }
         public int GetNextGoto(){
             return nextGoto;
+        }
+        public int GetIllustNum(){
+            return illustNum;
         }
     }
 
