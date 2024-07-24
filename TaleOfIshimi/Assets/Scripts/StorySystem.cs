@@ -18,10 +18,10 @@ public class StorySystem : MonoBehaviour
     [SerializeField] TextMeshProUGUI nameTextNPC;
     [SerializeField] TextMeshProUGUI nameTextPC;
     [SerializeField] GameObject choiceWin;
-    [SerializeField] GameObject nextButton;
     [SerializeField] Button[] buttons = new Button[4];
     [SerializeField] TextMeshProUGUI[] buttonTexts = new TextMeshProUGUI[4];
     [SerializeField] Slider timerUi;
+    
 
     private int storyMax = 0;
     private CharData charData = new CharData();
@@ -190,28 +190,39 @@ public class StorySystem : MonoBehaviour
     
     void SetConv(int n){
         convWin.SetActive(true);
+
+        bgImage.color = Color.white;
+        charImageNPC.color = Color.white;
+        charImagePC.color = Color.white;
+
+        choiceWin.SetActive(false);
+        modalImage.gameObject.SetActive(false);
         nameWinNPC.SetActive(false);
         nameWinPC.SetActive(false);
-        choiceWin.SetActive(false);
-        nextButton.SetActive(false);
         charImageNPC.gameObject.SetActive(false);
         charImagePC.gameObject.SetActive(false);
-        modalImage.gameObject.SetActive(false);
-
+        convText.gameObject.SetActive(true);
         isTimer = false;
 
+        ScriptType prevType = (currScript==null)?ScriptType.NARR:currScript.GetScriptType();
+
         currScript = storyObject.GetScript(n);
+        if(prevType == ScriptType.CHAR && currScript.GetScriptType() == ScriptType.CHAR){
+            charImageNPC.gameObject.SetActive(true);
+            charImagePC.gameObject.SetActive(true);
+            nameWinNPC.SetActive(true);
+            nameWinPC.SetActive(true);
+        }
         bgImage.sprite = Resources.Load<Sprite>(Const.BGIMG_PATH_BASE +currScript.GetBgimgNum().ToString());
         
             switch(currScript.GetScriptType()){
                 case ScriptType.NARR:
                     Debug.Log(":: SetNarr() Call");
-                    nextButton.SetActive(true);
                     SetNarr();
                     break;
                 case ScriptType.CHAR:
                     Debug.Log(":: SetCharDialogue() Call");
-                    nextButton.SetActive(true);
+                    bgImage.color = Color.gray;
                     SetCharDialogue();
                     break;
                 case ScriptType.CHOICE:
@@ -222,6 +233,7 @@ public class StorySystem : MonoBehaviour
                     SetFullIllust();
                     break;
                 case ScriptType.ILLUST_MODAL:
+                    bgImage.color = Color.gray;
                     SetModalIllust();
                     break;
                 default:
@@ -238,14 +250,18 @@ public class StorySystem : MonoBehaviour
     void SetCharDialogue(){
         int charNum = currScript.GetCharNum();
         if(charNum==0){
+            nameWinNPC.SetActive(false);
             nameWinPC.SetActive(true);
             charImagePC.gameObject.SetActive(true);
+            charImageNPC.color = Color.gray;
             nameTextPC.text = charData.GetCharacter(charNum).GetName();
             charImagePC.sprite = Resources.Load<Sprite>(Const.CHARACTER_PATH_BASE+charData.GetCharacter(charNum).GetSpriteAddress()+"/"+currScript.GetSpriteNum().ToString());
         }
         else{
+            nameWinPC.SetActive(false);
             nameWinNPC.SetActive(true);
             charImageNPC.gameObject.SetActive(true);
+            charImagePC.color = Color.gray;
             nameTextNPC.text = charData.GetCharacter(charNum).GetName();
             charImageNPC.sprite = Resources.Load<Sprite>(Const.CHARACTER_PATH_BASE+charData.GetCharacter(charNum).GetSpriteAddress()+"/"+currScript.GetSpriteNum().ToString());
         }
@@ -254,7 +270,6 @@ public class StorySystem : MonoBehaviour
 
     void SetChoice(){
         choiceWin.SetActive(true);
-        nextButton.SetActive(false);
         if(choiceScripts[currIdx].GetTimer()>0){
             // 타이머 셋팅 코드 -> invoke 재귀함수 사용
             isTimer = true;
@@ -276,6 +291,7 @@ public class StorySystem : MonoBehaviour
 
     void SetFullIllust(){
         convWin.SetActive(false);
+        convText.gameObject.SetActive(true);
         bgImage.sprite = Resources.Load<Sprite>(Const.ILLUST_PATH_BASE +currScript.GetBgimgNum().ToString());
     }
 
