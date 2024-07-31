@@ -1,4 +1,6 @@
-enum InteractionType {
+using System;
+
+public enum InteractionType {
     DIRECT_USE,
     GET_ONLY,
     CHANGE
@@ -36,5 +38,17 @@ public class Item
         }
 
         return tmpType;
+    }
+
+    public int getId(){
+        return id;
+    }
+
+    public string getName(){
+        return name;
+    }
+
+    public InteractionType getItemType(){
+        return type;
     }
 }

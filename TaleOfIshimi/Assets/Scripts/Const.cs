@@ -7,7 +7,9 @@ public static class Const{
     public static string CHARACTER_PATH_BASE = "Data/Character/";
     public static string ITEM_PATH_BASE = "Data/Item/";
     public static int CHARACTER_MAX_IDX = 0;
-    public static int ITEM_MAX_IDX = 100;
+
+    // 인벤토리 슬롯 UI 수동조정 필요
+    public static int ITEM_MAX_IDX = 4;
 
     public static float TEXT_EFF_SPEED = 2;
 
@@ -65,15 +67,12 @@ public static class Const{
         {"stage_id",0},
         {"item_id",1},
         {"name",2},
-        {"interaction_type",3},
-        {"is_gettable",4},
-        {"max_quant",5}
+        {"interaction_type",3}
     };
     public static string INVEN_TABLE = "Inventory";
     public static Dictionary<string,int> INVEN_ATTRIBUTE = new Dictionary<string,int>(){
         {"slot_id",0},
         {"stage_id",1},
-        {"item_id",2},
-        {"quantity",3}
+        {"item_id",2}
     };
 }

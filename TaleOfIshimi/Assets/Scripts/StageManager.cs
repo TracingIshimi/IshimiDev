@@ -6,7 +6,7 @@ public class StageManager : MonoBehaviour
 {
     public static StageManager stageManager;
 
-    private int stageNum = 0;
+    private int stageNum = 1;
 
     private void Awake(){
         if(stageManager == null){
