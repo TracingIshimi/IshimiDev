@@ -13,7 +13,7 @@ public class Inventory : MonoBehaviour
     private int nextIdx = 0;
     private int target = -1;
 
-    public ItemSlot[] itemSlots = new ItemSlot[4];
+    public ItemSlot[] itemSlots = new ItemSlot[6];
     [SerializeField] TextMeshProUGUI itemText;
 
     private void Awake(){
@@ -85,10 +85,20 @@ public class Inventory : MonoBehaviour
         SortInventory();
     }
     void AddItem(int itemIdx){
+        if(nextIdx >= Const.ITEM_MAX_IDX){
+            return;
+        }
         inventory[nextIdx] = puzzleItems[itemIdx];
         itemSlots[nextIdx].SetSlot(inventory[nextIdx]);
         Debug.Log(nextIdx+" :: "+inventory[nextIdx].getName());
         nextIdx++;
+    }
+
+    void DeleteItem(int slotIdx){
+        inventory[slotIdx] = null;
+        itemSlots[slotIdx].ClearSlot();
+        Debug.Log("Delete Item Call");
+        SortInventory();
     }
 
     public void ClickSlot(int slotId){
@@ -98,6 +108,9 @@ public class Inventory : MonoBehaviour
         if(target == slotId){
             //아이템 사용
             Debug.Log("Use Item: "+inventory[slotId].getName());
+            itemSlots[slotId].DeselectSlot();
+            target = -1;
+            DeleteItem(slotId);
         }
         else{
             if(target>=0){
@@ -110,6 +123,7 @@ public class Inventory : MonoBehaviour
 
 
     public void SortInventory(){
+        Debug.Log("Sort Inventory Call");
         int idx = 0;
         for(int i = 0; i<inventory.Length; i++){
             if(inventory[i] == null){

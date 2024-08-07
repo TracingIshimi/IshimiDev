@@ -9,7 +9,7 @@ public static class Const{
     public static int CHARACTER_MAX_IDX = 0;
 
     // 인벤토리 슬롯 UI 수동조정 필요
-    public static int ITEM_MAX_IDX = 4;
+    public static int ITEM_MAX_IDX = 6;
 
     public static float TEXT_EFF_SPEED = 2;
 

@@ -18,6 +18,7 @@ public class ItemSlot : MonoBehaviour,IPointerClickHandler,IPointerEnterHandler,
         this.item = item;
         itemImage.gameObject.SetActive(true);
         // 아이템 스프라이트 바꾸는 코드 필요 
+        itemImage.sprite = Resources.Load<Sprite>(Const.ITEM_PATH_BASE +StageManager.stageManager.GetStageNum()+'/'+item.getId().ToString());
     }
     public void ClearSlot(){
         isEmpty = true;
