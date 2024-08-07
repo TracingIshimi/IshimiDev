@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Mono.Data.Sqlite;
 using System.Data;
 
 public class StorySystem : MonoBehaviour
@@ -14,141 +13,58 @@ public class StorySystem : MonoBehaviour
     [SerializeField] Image charImageNPC;
     [SerializeField] Image charImagePC;
     [SerializeField] Image bgImage;
+    [SerializeField] Image modalImage;
     [SerializeField] TextMeshProUGUI convText;
     [SerializeField] TextMeshProUGUI nameTextNPC;
     [SerializeField] TextMeshProUGUI nameTextPC;
     [SerializeField] GameObject choiceWin;
     [SerializeField] Button[] buttons = new Button[4];
     [SerializeField] TextMeshProUGUI[] buttonTexts = new TextMeshProUGUI[4];
-
+    [SerializeField] Slider timerUi;
     
-    private IDbConnection dbConnection;
-    private int story_max = 0;
+
+    private int storyMax = 0;
     private CharData charData = new CharData();
     private StoryObject storyObject;
     private Dictionary<int,ChoiceScript> choiceScripts = new Dictionary<int, ChoiceScript>();
     private int currIdx;
     private SingleScript currScript;
 
-    class StoryObject{
-        public SingleScript[] scripts;
-        public StoryObject(int num){
-            scripts = new SingleScript[num];
-        }
-        public void SetScript(int n, SingleScript singleObj){
-            scripts[n] = singleObj;
-        }
-        public SingleScript GetScript(int n){
-            return scripts[n];
-        }
-        public int GetScriptLen(){
-            return scripts.Length;
-        }
-    }
-    
-    enum ScriptType{
-        NARR, 
-        CHAR,
-        CHOICE,
-        ILLUST_FULL,
-        ILLUST_MODAL
-    }
-    class SingleScript{
-        ScriptType type;
-        int charNum;
-        int spriteNum;
-        int bgimgNum;   // 스크립트 타입이 ILLUST_FULL일 경우 일러스트 ID로 사용
-        string content;
-        int nextGoto;
+    // Text Effect 관련 변수
+    private bool is_texteff = false;
+    private int effect_cnt;
+    private string completeDialogue;
 
-        // 생성자
-        public SingleScript(ScriptType type, int bgimgNum, int charNum, int charImgNum, string content, int nextGoto){
-            this.type = type;
-            this.bgimgNum = bgimgNum;
-            this.charNum = charNum;
-            spriteNum = charImgNum;
-            this.content = content;
-            this.nextGoto = nextGoto;
-        }
-
-        // Getter
-        public ScriptType GetScriptType(){
-            return type;
-        }
-        public string GetContent(){
-            return content;
-        }
-        public int GetCharNum(){
-            return charNum;
-        }
-        public int GetSpriteNum(){
-            return spriteNum;
-        }
-        public int GetBgimgNum(){
-            return bgimgNum;
-        }
-        public int GetNextGoto(){
-            return nextGoto;
-        }
-    }
-
-    class ChoiceScript{
-        int choiceMax;
-        int timer;
-        string[] choice = new string[4];
-        string[] mouseover = new string[4];
-        int[] choiceGoto = new int[5];
-
-        public ChoiceScript(int choiceMax, int timer, string[] choice, string[] mouseover, int[] choiceGoto){
-            this.choiceMax = choiceMax;
-            this.timer = timer;
-            this.choice = choice;
-            this.mouseover = mouseover;
-            this.choiceGoto = choiceGoto;
-        }
-
-        public int GetChoiceMax(){
-            return choiceMax;
-        }
-        public int GetTimer(){
-            return timer;
-        }
-        public string GetChoice(int idx){
-            return choice[idx];
-        }
-        public string GetMouseover(int idx){
-            return mouseover[idx];
-        }
-        public int GetChoiceGoto(int idx){
-            return choiceGoto[idx];
-        }
-
-    }
+    // 타이머 변수
+    private float sliderVal;
+    private bool isTimer = false;
+    private float maxTime;
+    private float currTime;
 
     private void Start(){
         InitConvDB();
-        InitConvSystem("TestConvData");
+        InitConvSystem();
     }
 
     private void InitConvDB(){
-        OpenDBConnection();
+        DBManager.dbManager.OpenDBConnection();
         List<int> charNumList = new List<int>();
 
         // 스크립트 라인 수 가져오기
-        IDbCommand stageCommand = dbConnection.CreateCommand();
+        IDbCommand stageCommand = DBManager.dbManager.dbConnection.CreateCommand();
         //dbCommand.CommandText = "SELECT * FROM "+Const.STAGE_TABLE+" WHERE stage_id = "+StageManager.stageManager.GetStageNum().ToString();
         stageCommand.CommandText = "SELECT * FROM "+Const.STAGE_TABLE+" WHERE stage_id = 0";
         IDataReader stageReader = stageCommand.ExecuteReader();
         while(stageReader.Read()){
-            story_max = stageReader.GetInt32(Const.STAGE_ATTRIBUTE["story_max"]);
+            storyMax = stageReader.GetInt32(Const.STAGE_ATTRIBUTE["story_max"]);
         }
-        storyObject = new StoryObject(story_max);
+        storyObject = new StoryObject(storyMax);
         stageReader.Close();
         stageCommand.Dispose();
         
         // 스토리 스크립트 가져오기
         //dbCommand.CommandText = "SELECT * FROM " + Const.STORY_TABLE+" WHERE stage_id = "+StageManager.stageManager.GetStageNum().ToString();
-        IDbCommand scriptCommand = dbConnection.CreateCommand();
+        IDbCommand scriptCommand = DBManager.dbManager.dbConnection.CreateCommand();
         scriptCommand.CommandText = "SELECT * FROM " + Const.STORY_TABLE+" WHERE stage_id = 0";
         IDataReader dataReader = scriptCommand.ExecuteReader();
 
@@ -156,6 +72,7 @@ public class StorySystem : MonoBehaviour
             int scriptId = dataReader.GetInt32(Const.STORY_ATTRIBUTE["script_id"]);
             ScriptType type = (ScriptType)dataReader.GetInt32(Const.STORY_ATTRIBUTE["type"]);
             int bgimgNum = dataReader.GetInt32(Const.STORY_ATTRIBUTE["bgimg_num"]);
+            int illustNum = dataReader.GetInt32(Const.STORY_ATTRIBUTE["illust_num"]);
             int charId = dataReader.GetInt32(Const.STORY_ATTRIBUTE["character_id"]);
             int charImgNum = dataReader.GetInt32(Const.STORY_ATTRIBUTE["charimg_num"]);
             string content = dataReader.GetString(Const.STORY_ATTRIBUTE["content"]);
@@ -167,7 +84,7 @@ public class StorySystem : MonoBehaviour
             }
 
             // 스크립트 객체 생성, append
-            storyObject.SetScript(scriptId,new SingleScript(type,bgimgNum,charId,charImgNum,content,nextGoto));
+            storyObject.SetScript(scriptId,new SingleScript(type,bgimgNum,illustNum,charId,charImgNum,content,nextGoto));
             Debug.Log(":: "+scriptId+" :: Content>> "+storyObject.GetScript(scriptId).GetContent());
         }
         dataReader.Close();
@@ -175,9 +92,9 @@ public class StorySystem : MonoBehaviour
 
         // 선택지 스크립트 가져오기
         //choiceCommand.CommandText = "SELECT * FROM "+Const.CHOICE_TABLE+"WHERE stage_id = "+StageManager.stageManager.GetStageNum().ToString();
-        IDbCommand choiceCommand = dbConnection.CreateCommand();
-        choiceCommand.CommandText = "SELECT * FROM "+Const.CHOICE_TABLE+"WHERE stage_id = 0";
-        IDataReader choiceReader = scriptCommand.ExecuteReader();
+        IDbCommand choiceCommand = DBManager.dbManager.dbConnection.CreateCommand();
+        choiceCommand.CommandText = "SELECT * FROM "+Const.CHOICE_TABLE+" WHERE stage_id = 0";
+        IDataReader choiceReader = choiceCommand.ExecuteReader();
 
         while(choiceReader.Read()){
             int scriptId = choiceReader.GetInt32(Const.CHOICE_ATTRIBUTE["script_id"]);
@@ -191,21 +108,32 @@ public class StorySystem : MonoBehaviour
             string[] mouseover = new string[4];
             int[] gotoNum = new int[5];
             for(int i = 0; i<4; i++){
-                if(choiceReader.GetString(choiceAttNum+i) != null){
+                if(!choiceReader.IsDBNull(choiceAttNum+i)){
                     choice[i] = choiceReader.GetString(choiceAttNum+i);
                 }
                 else{
                     choice[i] = "";
                 }
-                if(choiceReader.GetString(mouseAttNum+i) != null){
+                if(!choiceReader.IsDBNull(mouseAttNum+i)){
                     mouseover[i] = choiceReader.GetString(mouseAttNum+i);
                 }
                 else{
                     mouseover[i] = "";
                 }
-                gotoNum[i] = choiceReader.GetInt32(gotoAttNum+i);
+                if(!choiceReader.IsDBNull(gotoAttNum+i)){
+                    gotoNum[i] = choiceReader.GetInt32(gotoAttNum+i);
+                }
+                else{
+                    gotoNum[i] = -1;
+                }
+                
             }
-            gotoNum[4] = choiceReader.GetInt32(gotoAttNum+4);
+            if(!choiceReader.IsDBNull(gotoAttNum+4)){
+                gotoNum[4] = choiceReader.GetInt32(gotoAttNum+4);
+            }
+            else{
+                gotoNum[4] = -1;
+            }
             
             choiceScripts.Add(scriptId,new ChoiceScript(choiceMax,timer,choice,mouseover,gotoNum));
         }
@@ -213,7 +141,7 @@ public class StorySystem : MonoBehaviour
         choiceCommand.Dispose();
 
         // 캐릭터 정보 가져오기
-        IDbCommand characCommand = dbConnection.CreateCommand();
+        IDbCommand characCommand = DBManager.dbManager.dbConnection.CreateCommand();
         characCommand.CommandText = "SELECT * FROM "+Const.CHAR_TABLE;
         IDataReader characReader = characCommand.ExecuteReader();
 
@@ -229,20 +157,11 @@ public class StorySystem : MonoBehaviour
         characReader.Close();
         characCommand.Dispose();
         
-        CloseDBConnection();
+        DBManager.dbManager.CloseDBConnection();
     }
 
-    // DB 관련 코드 리팩토링 - 코드 파일 분리 필요
-    private void OpenDBConnection(){
-        string connectionString = "URI=file:"+Application.streamingAssetsPath+Const.DB_NAME;
-        dbConnection = new SqliteConnection(connectionString);
-        dbConnection.Open();
-    }
 
-    private void CloseDBConnection(){
-        dbConnection.Close();
-    }
-    public void InitConvSystem(string fileName){
+    public void InitConvSystem(){
         convWin.SetActive(true);
         currIdx = 0;
         SetConv(currIdx);
@@ -265,18 +184,35 @@ public class StorySystem : MonoBehaviour
     }
 
     public void ChoiceButton(int choiceIdx){
-        SetConv(choiceScripts[currIdx].GetChoiceGoto(choiceIdx));
+        currIdx = choiceScripts[currIdx].GetChoiceGoto(choiceIdx);
+        SetConv(currIdx);   
     }
     
     void SetConv(int n){
         convWin.SetActive(true);
-        nameWinNPC.SetActive(false);
-        nameWinNPC.SetActive(false);
+
+        bgImage.color = Color.white;
+        charImageNPC.color = Color.white;
+        charImagePC.color = Color.white;
+
         choiceWin.SetActive(false);
+        modalImage.gameObject.SetActive(false);
+        nameWinNPC.SetActive(false);
+        nameWinPC.SetActive(false);
         charImageNPC.gameObject.SetActive(false);
         charImagePC.gameObject.SetActive(false);
+        convText.gameObject.SetActive(true);
+        isTimer = false;
+
+        ScriptType prevType = (currScript==null)?ScriptType.NARR:currScript.GetScriptType();
 
         currScript = storyObject.GetScript(n);
+        if(prevType == ScriptType.CHAR && currScript.GetScriptType() == ScriptType.CHAR){
+            charImageNPC.gameObject.SetActive(true);
+            charImagePC.gameObject.SetActive(true);
+            nameWinNPC.SetActive(true);
+            nameWinPC.SetActive(true);
+        }
         bgImage.sprite = Resources.Load<Sprite>(Const.BGIMG_PATH_BASE +currScript.GetBgimgNum().ToString());
         
             switch(currScript.GetScriptType()){
@@ -286,45 +222,137 @@ public class StorySystem : MonoBehaviour
                     break;
                 case ScriptType.CHAR:
                     Debug.Log(":: SetCharDialogue() Call");
+                    bgImage.color = Color.gray;
                     SetCharDialogue();
                     break;
                 case ScriptType.CHOICE:
                     Debug.Log(":: SetChoice() Call");
                     SetChoice();
                     break;
+                case ScriptType.ILLUST_FULL:
+                    SetFullIllust();
+                    break;
+                case ScriptType.ILLUST_MODAL:
+                    bgImage.color = Color.gray;
+                    SetModalIllust();
+                    break;
                 default:
-                    Debug.Log("ERROR: "+n+"th script");
+                    Debug.Log("TYPE ERROR: "+n+"th script");
                     break;
             }
     }
 
     void SetNarr(){
         Debug.Log(currScript.GetContent());
-        convText.text = currScript.GetContent();
+        TextEffectStart(currScript.GetContent());
     }
 
     void SetCharDialogue(){
         int charNum = currScript.GetCharNum();
         if(charNum==0){
+            nameWinNPC.SetActive(false);
             nameWinPC.SetActive(true);
             charImagePC.gameObject.SetActive(true);
+            charImageNPC.color = Color.gray;
             nameTextPC.text = charData.GetCharacter(charNum).GetName();
-            charImagePC.sprite = Resources.Load<Sprite>(charData.GetCharacter(charNum).GetSpriteAddress()+currScript.GetSpriteNum().ToString());
+            charImagePC.sprite = Resources.Load<Sprite>(Const.CHARACTER_PATH_BASE+charData.GetCharacter(charNum).GetSpriteAddress()+"/"+currScript.GetSpriteNum().ToString());
         }
         else{
+            nameWinPC.SetActive(false);
             nameWinNPC.SetActive(true);
             charImageNPC.gameObject.SetActive(true);
+            charImagePC.color = Color.gray;
             nameTextNPC.text = charData.GetCharacter(charNum).GetName();
-            charImageNPC.sprite = Resources.Load<Sprite>(charData.GetCharacter(charNum).GetSpriteAddress()+currScript.GetSpriteNum().ToString());
+            charImageNPC.sprite = Resources.Load<Sprite>(Const.CHARACTER_PATH_BASE+charData.GetCharacter(charNum).GetSpriteAddress()+"/"+currScript.GetSpriteNum().ToString());
         }
-        convText.text = currScript.GetContent();
+        TextEffectStart(currScript.GetContent());
     }
 
     void SetChoice(){
         choiceWin.SetActive(true);
+        if(choiceScripts[currIdx].GetTimer()>0){
+            // 타이머 셋팅 코드 -> invoke 재귀함수 사용
+            isTimer = true;
+            maxTime = choiceScripts[currIdx].GetTimer();
+            currTime = 0;
+        }
         for(int i =0; i<choiceScripts[currIdx].GetChoiceMax(); i++){
+            buttons[i].gameObject.SetActive(true);
+            buttonTexts[i].gameObject.SetActive(true);
             buttons[i].GetComponentInChildren<TextMeshProUGUI>().text = choiceScripts[currIdx].GetChoice(i);
             buttonTexts[i].text = choiceScripts[currIdx].GetMouseover(i);
+        }
+        for(int j = choiceScripts[currIdx].GetChoiceMax(); j < 4; j++){
+            buttons[j].gameObject.SetActive(false);
+            buttonTexts[j].gameObject.SetActive(false);
+        }
+        SetNarr();
+    }
+
+    void SetFullIllust(){
+        convWin.SetActive(false);
+        convText.gameObject.SetActive(true);
+        bgImage.sprite = Resources.Load<Sprite>(Const.ILLUST_PATH_BASE +currScript.GetBgimgNum().ToString());
+    }
+
+    void SetModalIllust(){
+        modalImage.gameObject.SetActive(true);
+        modalImage.sprite = Resources.Load<Sprite>(Const.ILLUST_PATH_BASE +currScript.GetIllustNum().ToString());
+        if(currScript.GetCharNum()>=0){
+            SetCharDialogue();
+        }
+        else{
+            SetNarr();
+        }
+    }
+
+    // Text Effect 관련 코드
+    void TextEffectStart(string dialogue){
+        completeDialogue = dialogue;
+        convText.text = "";
+        effect_cnt=0;
+        is_texteff = true;
+        Invoke("TextEffecting",1/Const.TEXT_EFF_SPEED);
+    }
+    void TextEffecting(){
+        if(convText.text==completeDialogue){
+            TextEffectEnd();
+            return;
+        }
+        while(effect_cnt<completeDialogue.Length){
+            convText.text += completeDialogue[effect_cnt];
+            if(completeDialogue[effect_cnt]==' ' || completeDialogue[effect_cnt]=='\n'){
+                effect_cnt++;
+                break;
+            }
+            effect_cnt++;
+        }
+        Debug.Log("End Effecting");
+        Invoke("TextEffecting",1/Const.TEXT_EFF_SPEED);
+    }
+    void TextEffectEnd(){
+        is_texteff = false;
+        convText.text = completeDialogue;
+    }
+    void Update(){
+        if(Input.GetMouseButtonDown(0)){
+            if(is_texteff){
+                CancelInvoke();
+                TextEffectEnd();
+            }
+
+            else if(currScript.GetScriptType()!=ScriptType.CHOICE) {
+                NextButton();
+            }
+        }
+        if(isTimer){
+            currTime+=Time.deltaTime;
+            if(maxTime>=currTime){
+                timerUi.value = 1-(currTime/maxTime);
+            }
+            else{
+                ChoiceButton(Const.CHOICE_ATTRIBUTE["gotoNULL"]-Const.CHOICE_ATTRIBUTE["goto1"]);
+            }
         }
     }
 }

@@ -3,10 +3,13 @@ using System.Collections.Generic;
 public static class Const{
     public static string STORY_PATH_BASE = "Assets/Resources/Data/Story/";
     public static string BGIMG_PATH_BASE = "Data/BgImg/";
+    public static string ILLUST_PATH_BASE = "Data/Illust/";
     public static string CHARACTER_PATH_BASE = "Data/Character/";
     public static string ITEM_PATH_BASE = "Data/Item/";
     public static int CHARACTER_MAX_IDX = 0;
     public static int ITEM_MAX_IDX = 100;
+
+    public static float TEXT_EFF_SPEED = 2;
 
     // DB 관련
     public static string DB_NAME = "/TaleOfIshimi.db";
@@ -31,10 +34,11 @@ public static class Const{
         {"script_id",1},
         {"type",2},
         {"bgimg_num",3},
-        {"character_id",4},
-        {"charimg_num",5},
-        {"content",6},
-        {"next_goto",7}
+        {"illust_num",4},
+        {"character_id",5},
+        {"charimg_num",6},
+        {"content",7},
+        {"next_goto",8}
     };
     public static string CHOICE_TABLE = "Choice";
     public static Dictionary<string,int> CHOICE_ATTRIBUTE = new Dictionary<string,int>(){

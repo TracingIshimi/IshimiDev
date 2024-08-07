@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Character{
     string name;
@@ -19,8 +20,9 @@ public class Character{
     }
 }
 public class CharData{
-    Dictionary<int, Character> characterArray ;
+    Dictionary<int, Character> characterArray = new Dictionary<int, Character>();
     public void AddCharacter(int idNum, Character tmpCharacter){
+        Debug.Log(idNum+"\tname: "+tmpCharacter.GetName());
         characterArray.Add(idNum, tmpCharacter);
     }
     public Character GetCharacter(int idNum){
