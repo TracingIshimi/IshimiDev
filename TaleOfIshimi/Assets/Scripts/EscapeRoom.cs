@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class EscapeRoom : MonoBehaviour
 {
-    public GameObject item;
-    private void OnMouseUp() {
-        Destroy(item);
+    [SerializeField] PuzzleManager testObject; 
+
+    void OnMouseUp() {
+        testObject.OnClickJustItem();
     }
 }
