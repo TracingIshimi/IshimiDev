@@ -56,7 +56,11 @@ public class Inventory : MonoBehaviour
             Debug.Log("id: "+tmpId);
             string tmpName = itemReader.GetString(Const.ITEM_ATTRIBUTE["name"]);
             string tmptType = itemReader.GetString(Const.ITEM_ATTRIBUTE["interaction_type"]);
-            puzzleItems[tmpId] = new Item(tmpId, tmpName, tmptType);
+            string tmpEtc = "";
+            if(!itemReader.IsDBNull(Const.ITEM_ATTRIBUTE["etc"])){
+                tmpEtc = itemReader.GetString(Const.ITEM_ATTRIBUTE["etc"]);
+            }
+            puzzleItems[tmpId] = new Item(tmpId, tmpName, tmptType, tmpEtc);
         }
         itemReader.Close();
         itemCommand.Dispose();
@@ -104,6 +108,15 @@ public class Inventory : MonoBehaviour
     public void ClickSlot(int slotId){
         if(itemSlots[slotId].SlotEmpty()){
             return;
+        }
+        if(itemSlots[slotId].GetItem().getItemType()==InteractionType.ADDWITH && itemSlots[target].GetItem().getItemType()==InteractionType.ADDWITH){
+            if(itemSlots[slotId].GetItem().getEtc().ToString() == itemSlots[target].GetItem().getEtc().ToString()){
+                Debug.Log("ADD Item: "+itemSlots[slotId].GetItem().getName()+" + "+itemSlots[target].GetItem().getName());
+                target = -1;
+                DeleteItem(slotId);
+                DeleteItem(target);
+                //AddItem(slotId*target);
+            }
         }
         if(target == slotId){
             //아이템 사용

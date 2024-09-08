@@ -69,14 +69,12 @@
         int choiceMax;
         int timer;
         string[] choice = new string[4];
-        string[] mouseover = new string[4];
         int[] choiceGoto = new int[5];
 
-        public ChoiceScript(int choiceMax, int timer, string[] choice, string[] mouseover, int[] choiceGoto){
+        public ChoiceScript(int choiceMax, int timer, string[] choice, int[] choiceGoto){
             this.choiceMax = choiceMax;
             this.timer = timer;
             this.choice = choice;
-            this.mouseover = mouseover;
             this.choiceGoto = choiceGoto;
         }
 
@@ -88,9 +86,6 @@
         }
         public string GetChoice(int idx){
             return choice[idx];
-        }
-        public string GetMouseover(int idx){
-            return mouseover[idx];
         }
         public int GetChoiceGoto(int idx){
             return choiceGoto[idx];

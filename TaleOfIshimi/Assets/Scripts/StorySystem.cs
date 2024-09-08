@@ -19,7 +19,6 @@ public class StorySystem : MonoBehaviour
     [SerializeField] TextMeshProUGUI nameTextPC;
     [SerializeField] GameObject choiceWin;
     [SerializeField] Button[] buttons = new Button[4];
-    [SerializeField] TextMeshProUGUI[] buttonTexts = new TextMeshProUGUI[4];
     [SerializeField] Slider timerUi;
     
 
@@ -102,10 +101,8 @@ public class StorySystem : MonoBehaviour
             int timer = choiceReader.GetInt32(Const.CHOICE_ATTRIBUTE["timer"]);
 
             int choiceAttNum = Const.CHOICE_ATTRIBUTE["choice1"];
-            int mouseAttNum = Const.CHOICE_ATTRIBUTE["mouse1"];
             int gotoAttNum = Const.CHOICE_ATTRIBUTE["goto1"];
             string[] choice = new string[4];
-            string[] mouseover = new string[4];
             int[] gotoNum = new int[5];
             for(int i = 0; i<4; i++){
                 if(!choiceReader.IsDBNull(choiceAttNum+i)){
@@ -113,12 +110,6 @@ public class StorySystem : MonoBehaviour
                 }
                 else{
                     choice[i] = "";
-                }
-                if(!choiceReader.IsDBNull(mouseAttNum+i)){
-                    mouseover[i] = choiceReader.GetString(mouseAttNum+i);
-                }
-                else{
-                    mouseover[i] = "";
                 }
                 if(!choiceReader.IsDBNull(gotoAttNum+i)){
                     gotoNum[i] = choiceReader.GetInt32(gotoAttNum+i);
@@ -135,7 +126,7 @@ public class StorySystem : MonoBehaviour
                 gotoNum[4] = -1;
             }
             
-            choiceScripts.Add(scriptId,new ChoiceScript(choiceMax,timer,choice,mouseover,gotoNum));
+            choiceScripts.Add(scriptId,new ChoiceScript(choiceMax,timer,choice,gotoNum));
         }
         choiceReader.Close();
         choiceCommand.Dispose();
@@ -278,13 +269,10 @@ public class StorySystem : MonoBehaviour
         }
         for(int i =0; i<choiceScripts[currIdx].GetChoiceMax(); i++){
             buttons[i].gameObject.SetActive(true);
-            buttonTexts[i].gameObject.SetActive(true);
             buttons[i].GetComponentInChildren<TextMeshProUGUI>().text = choiceScripts[currIdx].GetChoice(i);
-            buttonTexts[i].text = choiceScripts[currIdx].GetMouseover(i);
         }
         for(int j = choiceScripts[currIdx].GetChoiceMax(); j < 4; j++){
             buttons[j].gameObject.SetActive(false);
-            buttonTexts[j].gameObject.SetActive(false);
         }
         SetNarr();
     }

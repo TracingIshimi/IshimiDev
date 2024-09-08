@@ -3,7 +3,8 @@ using System;
 public enum InteractionType {
     DIRECT_USE,
     GET_ONLY,
-    CHANGE
+    CHANGE,
+    ADDWITH
 };
 
 public class Item
@@ -11,15 +12,18 @@ public class Item
     int id;
     string name;
     InteractionType type;
+    string etc;
 
     public Item(){
         name = "";
         type = 0;
+        etc = "";
     }
-    public Item(int id, string name, string type){
+    public Item(int id, string name, string type, string etc){
         this.id = id;
         this.name = name;
         this.type = ParseType(type);
+        this.etc = etc;
     }
 
     InteractionType ParseType(string type){
@@ -30,6 +34,9 @@ public class Item
                 break;
             case "change":
                 tmpType = InteractionType.CHANGE;
+                break;
+            case "addwith":
+                tmpType = InteractionType.ADDWITH;
                 break;
             case "direct use":
             default:
@@ -50,5 +57,9 @@ public class Item
 
     public InteractionType getItemType(){
         return type;
+    }
+
+    public string getEtc(){
+        return etc;
     }
 }
