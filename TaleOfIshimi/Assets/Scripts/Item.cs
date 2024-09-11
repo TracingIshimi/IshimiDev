@@ -4,7 +4,9 @@ public enum InteractionType {
     DIRECT_USE,
     GET_ONLY,
     CHANGE,
-    ADDWITH
+    ADDWITH_ITEM,
+    ADDWITH_MAP,
+    SPSIGHT
 };
 
 public class Item
@@ -35,8 +37,14 @@ public class Item
             case "change":
                 tmpType = InteractionType.CHANGE;
                 break;
-            case "addwith":
-                tmpType = InteractionType.ADDWITH;
+            case "addwith_item":
+                tmpType = InteractionType.ADDWITH_ITEM;
+                break;
+            case "addwith_map":
+                tmpType = InteractionType.ADDWITH_MAP;
+                break;
+            case "spsight":
+                tmpType = InteractionType.SPSIGHT;
                 break;
             case "direct use":
             default:
