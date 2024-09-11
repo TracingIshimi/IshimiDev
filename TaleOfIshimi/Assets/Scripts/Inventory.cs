@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -102,6 +103,7 @@ public class Inventory : MonoBehaviour
         inventory[slotIdx] = null;
         itemSlots[slotIdx].ClearSlot();
         Debug.Log("Delete Item Call");
+        nextIdx--;
         SortInventory();
     }
 
@@ -109,16 +111,22 @@ public class Inventory : MonoBehaviour
         if(itemSlots[slotId].SlotEmpty()){
             return;
         }
-        if(itemSlots[slotId].GetItem().getItemType()==InteractionType.ADDWITH && itemSlots[target].GetItem().getItemType()==InteractionType.ADDWITH){
-            if(itemSlots[slotId].GetItem().getEtc().ToString() == itemSlots[target].GetItem().getEtc().ToString()){
+        Debug.Log(itemSlots[slotId].GetItem().getItemType().ToString());
+        if(target!=-1 && itemSlots[slotId].GetItem().getItemType()==InteractionType.ADDWITH_ITEM && itemSlots[target].GetItem().getItemType()==InteractionType.ADDWITH_ITEM){
+            int itemA = itemSlots[slotId].GetItem().getId();
+            int itemB = itemSlots[target].GetItem().getId();
+            string[] stringA = itemSlots[slotId].GetItem().getEtc().Split('_');
+            string[] stringB = itemSlots[target].GetItem().getEtc().Split('_');
+            if(stringA[0]==itemB.ToString() && stringB[0]==itemA.ToString()){
                 Debug.Log("ADD Item: "+itemSlots[slotId].GetItem().getName()+" + "+itemSlots[target].GetItem().getName());
+                DeleteItem(Math.Max(slotId,target));
+                DeleteItem(Math.Min(slotId,target));
+                AddItem(int.Parse(stringA[1]));
+                itemSlots[target].DeselectSlot();
                 target = -1;
-                DeleteItem(slotId);
-                DeleteItem(target);
-                //AddItem(slotId*target);
             }
         }
-        if(target == slotId){
+        else if(target == slotId){
             //아이템 사용
             Debug.Log("Use Item: "+inventory[slotId].getName());
             itemSlots[slotId].DeselectSlot();
@@ -135,7 +143,7 @@ public class Inventory : MonoBehaviour
     }
 
 
-    public void SortInventory(){
+    void SortInventory(){
         Debug.Log("Sort Inventory Call");
         int idx = 0;
         for(int i = 0; i<inventory.Length; i++){
@@ -157,7 +165,7 @@ public class Inventory : MonoBehaviour
         SetSlotGraphics();
     }
 
-    public void SetSlotGraphics(){
+    void SetSlotGraphics(){
         for(int i = 0; i<itemSlots.Length; i++){
             if(inventory[i] == null){
                 itemSlots[i].ClearSlot();
