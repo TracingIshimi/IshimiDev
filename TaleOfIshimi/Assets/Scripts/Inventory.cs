@@ -17,6 +17,8 @@ public class Inventory : MonoBehaviour
     public ItemSlot[] itemSlots = new ItemSlot[6];
     [SerializeField] TextMeshProUGUI itemText;
 
+
+/////////////////////// Manager 객체 초기화 ///////////////////////
     private void Awake(){
         if(imanager == null){
             imanager = this;
@@ -28,20 +30,12 @@ public class Inventory : MonoBehaviour
         for(int i = 0; i<itemSlots.Length; i++){
             itemSlots[i].SetSlotID(i);
         }
+    }
+
+/////////////////////// 인벤토리 초기화 ///////////////////////
+    private void Start(){
+        itemText.text = "";
         InitInventory();
-    }
-
-    public void SetItemText(string text){
-        itemText.text = text;
-    }
-
-    public void SetItemTextTarget(){
-        if(target<0){
-            itemText.text = "";
-        }
-        else{
-            itemText.text = inventory[target].getName();
-        }
     }
 
     void InitInventory(){
@@ -89,7 +83,9 @@ public class Inventory : MonoBehaviour
         }
         SortInventory();
     }
-    void AddItem(int itemIdx){
+
+/////////////////////// 인벤토리 기능 ///////////////////////
+    public void AddItem(int itemIdx){
         if(nextIdx >= Const.ITEM_MAX_IDX){
             return;
         }
@@ -99,7 +95,7 @@ public class Inventory : MonoBehaviour
         nextIdx++;
     }
 
-    void DeleteItem(int slotIdx){
+    public void DeleteItem(int slotIdx){
         inventory[slotIdx] = null;
         itemSlots[slotIdx].ClearSlot();
         Debug.Log("Delete Item Call");
@@ -107,38 +103,97 @@ public class Inventory : MonoBehaviour
         SortInventory();
     }
 
+    bool CombineItems(int slotA, int slotB){
+        Debug.Log("CombineItem Call");
+        string[] stringA = itemSlots[slotA].GetItem().getEtc().Split('_');
+        string[] stringB = itemSlots[slotB].GetItem().getEtc().Split('_');
+        int idA = itemSlots[slotA].GetItem().getId();
+        int idB = itemSlots[slotB].GetItem().getId();
+
+        if(stringA[0]==idB.ToString() && stringB[0]==idA.ToString()){
+            Debug.Log("ADD Item: "+itemSlots[slotA].GetItem().getName()+" + "+itemSlots[slotB].GetItem().getName());
+            DeleteItem(Math.Max(slotA,slotB));
+            DeleteItem(Math.Min(slotA,slotB));
+            AddItem(int.Parse(stringA[1]));
+            ResetTarget();
+            return true;
+        }
+        return false;
+    }
+
+
+/////////////////////// 타겟 기능 ///////////////////////
+    void SetTarget(int idx){
+        if(target>=0){
+            itemSlots[target].DeselectSlot();
+        }
+        itemSlots[idx].SelectSlot();
+        target = idx;
+    }
+
+    void ResetTarget(){
+        if(target<0){
+            return;
+        }
+        itemSlots[target].DeselectSlot();
+        target = -1;
+    }
+
+
+/////////////////////// 인터랙션 기능 ///////////////////////
     public void ClickSlot(int slotId){
         if(itemSlots[slotId].SlotEmpty()){
             return;
         }
-        Debug.Log(itemSlots[slotId].GetItem().getItemType().ToString());
-        if(target!=-1 && itemSlots[slotId].GetItem().getItemType()==InteractionType.ADDWITH_ITEM && itemSlots[target].GetItem().getItemType()==InteractionType.ADDWITH_ITEM){
-            int itemA = itemSlots[slotId].GetItem().getId();
-            int itemB = itemSlots[target].GetItem().getId();
-            string[] stringA = itemSlots[slotId].GetItem().getEtc().Split('_');
-            string[] stringB = itemSlots[target].GetItem().getEtc().Split('_');
-            if(stringA[0]==itemB.ToString() && stringB[0]==itemA.ToString()){
-                Debug.Log("ADD Item: "+itemSlots[slotId].GetItem().getName()+" + "+itemSlots[target].GetItem().getName());
-                DeleteItem(Math.Max(slotId,target));
-                DeleteItem(Math.Min(slotId,target));
-                AddItem(int.Parse(stringA[1]));
-                itemSlots[target].DeselectSlot();
-                target = -1;
-            }
+
+        Debug.Log(itemSlots[slotId].GetItem().getName()+ " :: type ->" +itemSlots[slotId].GetItem().getItemType().ToString());
+
+        if(target<0){
+            SetTarget(slotId);
+            return;
         }
-        else if(target == slotId){
-            //아이템 사용
+
+        InteractionType slotType = itemSlots[slotId].GetItem().getItemType();
+
+        switch(slotType){
+            case InteractionType.ADDWITH_MAP:
+                break;
+            case InteractionType.ADDWITH_ITEM:
+                if(itemSlots[target].GetItem().getItemType()==InteractionType.ADDWITH_ITEM){
+                    bool isCombined = CombineItems(target,slotId);
+                    if(isCombined){return;}
+                }
+                break;
+            case InteractionType.SPSIGHT:
+                break;
+            case InteractionType.DIRECT_USE:
+            default:
+                break;
+        }
+
+        // 아이템 사용
+        if(target == slotId){
             Debug.Log("Use Item: "+inventory[slotId].getName());
-            itemSlots[slotId].DeselectSlot();
-            target = -1;
+            ResetTarget();
             DeleteItem(slotId);
         }
+        // 타겟 변경
         else{
-            if(target>=0){
-                itemSlots[target].DeselectSlot();
-            }
-            itemSlots[slotId].SelectSlot();
-            target = slotId;
+            SetTarget(slotId);
+        }
+    }
+
+    /////////////////////// GUI 관련 ///////////////////////
+    public void SetItemText(string text){
+        itemText.text = text;
+    }
+
+    public void SetItemTextTarget(){
+        if(target<0){
+            itemText.text = "";
+        }
+        else{
+            itemText.text = inventory[target].getName();
         }
     }
 
