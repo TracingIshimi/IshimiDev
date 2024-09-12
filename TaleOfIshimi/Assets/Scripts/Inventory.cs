@@ -131,7 +131,7 @@ public class Inventory : MonoBehaviour
         target = idx;
     }
 
-    void ResetTarget(){
+    public void ResetTarget(){
         if(target<0){
             return;
         }
@@ -143,6 +143,7 @@ public class Inventory : MonoBehaviour
 /////////////////////// 인터랙션 기능 ///////////////////////
     public void ClickSlot(int slotId){
         if(itemSlots[slotId].SlotEmpty()){
+            ResetTarget();
             return;
         }
 
@@ -230,5 +231,13 @@ public class Inventory : MonoBehaviour
             }
         }
 
+    }
+
+/////////////////////// Getter ///////////////////////
+    public int GetTarget(){
+        return target;
+    }
+    public Item GetSlotItem(int idx){
+        return itemSlots[idx].GetItem();
     }
 }
