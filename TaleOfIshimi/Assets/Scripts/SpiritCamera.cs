@@ -53,13 +53,31 @@ public class SpiritCamera : MonoBehaviour
         float deltaB = (b - objCam.rect.y)/Const.SCREEN_EFF_SPEED;
         float deltaC = (c - objCam.rect.width)/Const.SCREEN_EFF_SPEED;
         float deltaD = (d - objCam.rect.height)/Const.SCREEN_EFF_SPEED;
+
+        int cnt = 1;
+        bool toSPsight = false;
+        if(deltaD < 0){
+            toSPsight = true;
+        }
+        else if(deltaD > 0){
+            toSPsight = false;
+        }
+        else{
+            StopCoroutine("SetResolution");
+        }
         while(true){
-            if(Math.Abs(objCam.rect.x-a)<0.001f && Math.Abs(objCam.rect.y-b)<0.001f && Math.Abs(objCam.rect.width-c)<0.001f && Math.Abs(objCam.rect.height-d)<0.001f){
+            if(toSPsight && objCam.rect.height+deltaD*cnt<=d){
                 objCam.rect = new Rect(a,b,c,d);
                 StopCoroutine("SetResolution");
                 break;
             }
-            objCam.rect = new Rect(objCam.rect.x+deltaA, objCam.rect.y+deltaB, objCam.rect.width+deltaC, objCam.rect.height+deltaD);
+            else if(!toSPsight && objCam.rect.height+deltaD*cnt>=d){
+                objCam.rect = new Rect(a,b,c,d);
+                StopCoroutine("SetResolution");
+                break;
+            }
+            objCam.rect = new Rect(objCam.rect.x+deltaA*cnt, objCam.rect.y+deltaB*cnt, objCam.rect.width+deltaC*cnt, objCam.rect.height+deltaD*cnt);
+            cnt++;
             yield return null;
         }
         yield return null;

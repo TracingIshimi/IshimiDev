@@ -6,7 +6,7 @@ public static class Const{
     public static int IDLE_SCREEN_HEIGHT = 1080;
     public static float SP_SCREEN_WIDTH = 2.39f;
     public static float SP_SCREEN_HEIGHT = 1;
-    public static float SCREEN_EFF_SPEED = 20;
+    public static float SCREEN_EFF_SPEED = 200;  // 클수록 느려짐
 
     public static string STORY_PATH_BASE = "Assets/Resources/Data/Story/";
     public static string BGIMG_PATH_BASE = "Data/BgImg/";
