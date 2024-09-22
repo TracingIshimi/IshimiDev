@@ -16,6 +16,7 @@ public class Inventory : MonoBehaviour
 
     public ItemSlot[] itemSlots = new ItemSlot[6];
     [SerializeField] TextMeshProUGUI itemText;
+    [SerializeField] public SpiritCamera spCam;
 
 
 /////////////////////// Manager 객체 초기화 ///////////////////////
@@ -166,6 +167,12 @@ public class Inventory : MonoBehaviour
                 }
                 break;
             case InteractionType.SPSIGHT:
+                if(target==slotId){
+                    spCam.SetSpResolution();
+                    //추가 SPsight 관련 함수들(스테이지별 관리);
+                    ResetTarget();
+                    DeleteItem(slotId);
+                }
                 break;
             case InteractionType.DIRECT_USE:
             default:

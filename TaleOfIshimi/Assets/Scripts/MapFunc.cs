@@ -13,6 +13,19 @@ public class MapFunc : MonoBehaviour, IPointerClickHandler
 
     [SerializeField] GameObject MainObj;
 
+    int spriteIdx = 0;
+    int maxIdx = 0;
+
+    void Start(){
+        if(interType[0]=="ChangeForm"){
+            maxIdx = transform.childCount;
+            for(int i = 0; i< maxIdx; i++){
+                transform.GetChild(i).gameObject.SetActive(false);
+            }
+            transform.GetChild(spriteIdx).gameObject.SetActive(true);
+        }
+    }
+
     public void OnPointerClick(PointerEventData eventData){
         for(int i = 0; i<interType.Length; i++){
             Debug.Log(interType[i]);
@@ -77,6 +90,13 @@ public class MapFunc : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    void ChangeForm(){
+        transform.GetChild(spriteIdx).gameObject.SetActive(false);
+        spriteIdx++;
+        spriteIdx%=maxIdx;
+        transform.GetChild(spriteIdx).gameObject.SetActive(true);
+    }
+
     void DeactivateSelf(){
         if(dontDeactivate){
             return;
@@ -89,6 +109,6 @@ public class MapFunc : MonoBehaviour, IPointerClickHandler
     }
 
     void SpiritActivate(){
-
+        Inventory.imanager.spCam.SetSpResolution();
     }
 }
