@@ -11,7 +11,7 @@ public class PWDPuzzle : MonoBehaviour
     [SerializeField] Sprite[] sprites;
     public PWDPrefab prefab;
     PWDPrefab[] slots;
-    int[] currPwd;
+    int[] currPwd = new int[5];
     void Start()
     {
         Debug.Log("Puzzle Prefab Initialize");
