@@ -15,16 +15,28 @@ public class PWDPuzzle : MonoBehaviour
     void Start()
     {
         Debug.Log("Puzzle Prefab Initialize");
-        currPwd = new int[digits];
         slots = new PWDPrefab[digits];
         float xPos = 0;
         for(int i = 0; i<digits; i++){
-            currPwd[i] = 0;
             slots[i] = Instantiate(prefab);
             slots[i].transform.SetParent(this.transform);
             slots[i].transform.localPosition = new Vector3(xPos,0,0);
             slots[i].InitPrefab(i,maxidx,this);
             xPos+=1.3f;
+        }
+        InitPWDPuzzle();
+    }
+
+    void OnDisable(){
+        InitPWDPuzzle();
+    }
+
+    void InitPWDPuzzle(){
+        currPwd = new int[digits];
+        Debug.Log(currPwd.Length);
+        for(int i =0; i<digits; i++){
+            SetCurrPWD(i,0);
+            slots[i].SetIndex(currPwd[i]);
         }
     }
 

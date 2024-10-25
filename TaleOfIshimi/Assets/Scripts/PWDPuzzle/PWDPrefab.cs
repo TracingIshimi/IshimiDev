@@ -23,6 +23,14 @@ public class PWDPrefab : MonoBehaviour
         parent.SetCurrPWD(dig,index);
     }
 
+    public void SetIndex(int num){
+        if(num<0 || num>=maxIdx){
+            return;
+        }
+        index = num;
+        SetSpriteField();
+    }
+
     public void IdxUp(){
         index++;
         index%=maxIdx;
