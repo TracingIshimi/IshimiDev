@@ -22,6 +22,7 @@ public class Room : MonoBehaviour
     public static Room room;
     public int clickNum = 0;
     public int[] clickInput = new int[3];
+    public int[] isClickedAlready = new int[3];
     public GameObject[] fire;
 
     private void Awake() {
