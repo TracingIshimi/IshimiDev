@@ -12,6 +12,7 @@ public class MapFunc : MonoBehaviour, IPointerClickHandler
     public bool dontDeactivate = false;
 
     [SerializeField] GameObject MainObj;
+    [SerializeField] StorySystem StoryObj;
 
     int spriteIdx = 0;
     int maxIdx = 0;
@@ -106,6 +107,20 @@ public class MapFunc : MonoBehaviour, IPointerClickHandler
 
     void ActivateObj(){
         MainObj.transform.GetChild(int.Parse(etc)).gameObject.SetActive(true);
+    }
+
+    void SetConv(){
+        // etc 형식: initScriptID_defaultScriptID_isDefault
+        string[] thisEtc = etc.Split('_');
+        int scrptId = 0;
+        if(thisEtc[2]=="1"){
+            scrptId = int.Parse(thisEtc[1]);
+        }
+        else{
+            scrptId = int.Parse(thisEtc[0]);
+            etc = thisEtc[0]+"_"+thisEtc[1]+"_1";
+        }
+        StoryObj.ChoiceButton(scrptId);
     }
 
     void SpiritActivate(){
