@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public class PWDButton : MonoBehaviour,IPointerClickHandler
 {
-    public int buttonType;
+    public int buttonType;  // 0: UP, 1: DOWN
     [SerializeField] PWDPrefab pref;
     public void OnPointerClick(PointerEventData eventData){
         if(buttonType==0){
