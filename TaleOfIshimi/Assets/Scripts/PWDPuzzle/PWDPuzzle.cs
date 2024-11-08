@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PWDPuzzle : MonoBehaviour
 {
+    public bool isUI = false;
     public int digits;
     public int maxidx;
     public string path = "Data/Puzzle/";
