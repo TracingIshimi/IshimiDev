@@ -1,25 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class PWDPrefab : MonoBehaviour
 {
+    public bool isUI;
     PWDPuzzle parent;
     int dig;
     int maxIdx;
     int index = 0;
     public SpriteRenderer spriteRenderer;
-    [SerializeField] Sprite sprite;
+
     public void InitPrefab(int dig, int idx, PWDPuzzle parent){
         Debug.Log("InitPrefab Call: "+dig);
         this.dig = dig;
         maxIdx = idx;
         this.parent = parent;
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        if(!isUI){
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
         SetSpriteField();
     }
     void SetSpriteField(){
-        spriteRenderer.sprite = Resources.Load<Sprite>(parent.GetPath()+'/'+index.ToString());
+        if(isUI){
+            GetComponent<Image>().sprite = Resources.Load<Sprite>(parent.GetPath()+'/'+index.ToString());
+        }
+        else{
+            spriteRenderer.sprite = Resources.Load<Sprite>(parent.GetPath()+'/'+index.ToString());
+        }
         parent.SetCurrPWD(dig,index);
     }
 
