@@ -174,7 +174,7 @@ public class StorySystem : MonoBehaviour
         
     }
 
-    public void ChoiceButton(int choiceIdx){
+    public void ChoiceButton(int choiceIdx){    // 외부에서 call 할 때도 이 함수 사용
         currIdx = choiceScripts[currIdx].GetChoiceGoto(choiceIdx);
         SetConv(currIdx);   
     }
@@ -226,6 +226,9 @@ public class StorySystem : MonoBehaviour
                 case ScriptType.ILLUST_MODAL:
                     bgImage.color = Color.gray;
                     SetModalIllust();
+                    break;
+                case ScriptType.END_CONV:
+                    EndConv();
                     break;
                 default:
                     Debug.Log("TYPE ERROR: "+n+"th script");
@@ -292,6 +295,10 @@ public class StorySystem : MonoBehaviour
         else{
             SetNarr();
         }
+    }
+
+    void EndConv(){
+        convWin.SetActive(false);
     }
 
     // Text Effect 관련 코드

@@ -19,7 +19,8 @@
         CHAR,
         CHOICE,
         ILLUST_FULL,
-        ILLUST_MODAL
+        ILLUST_MODAL, 
+        END_CONV
     }
     class SingleScript{
         ScriptType type;
