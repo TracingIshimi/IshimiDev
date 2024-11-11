@@ -50,6 +50,7 @@ public class ClickOrderPuzzle : MonoBehaviour, IPointerClickHandler
         }
         
     }
+    
 
 
 }

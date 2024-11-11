@@ -7,13 +7,13 @@ public class Room : MonoBehaviour
     public GameObject[] roomSides;
     private int currentRoomIndex = 0;
 
-    public void MoveToNextSide() {
+    public void MoveToRightSide() {
         roomSides[currentRoomIndex].SetActive(false);
         currentRoomIndex = (currentRoomIndex + 1) % roomSides.Length;
         roomSides[currentRoomIndex].SetActive(true);
     }
 
-    public void MoveToPreviousSide() {
+    public void MoveToLeftSide() {
         roomSides[currentRoomIndex].SetActive(false);
         currentRoomIndex = (currentRoomIndex - 1 + roomSides.Length) % roomSides.Length;
         roomSides[currentRoomIndex].SetActive(true);
