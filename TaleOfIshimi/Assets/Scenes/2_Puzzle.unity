@@ -489,6 +489,7 @@ MonoBehaviour:
   etc: 
   dontDeactivate: 0
   MainObj: {fileID: 1396887831}
+  StoryObj: {fileID: 0}
 --- !u!60 &135248645
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -1571,6 +1572,7 @@ MonoBehaviour:
   etc: 5_2
   dontDeactivate: 0
   MainObj: {fileID: 1396887831}
+  StoryObj: {fileID: 0}
 --- !u!60 &396540439
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -2588,6 +2590,7 @@ MonoBehaviour:
   etc: 
   dontDeactivate: 0
   MainObj: {fileID: 1396887831}
+  StoryObj: {fileID: 0}
 --- !u!1 &899891150
 GameObject:
   m_ObjectHideFlags: 0
@@ -3454,6 +3457,7 @@ MonoBehaviour:
   etc: 2
   dontDeactivate: 1
   MainObj: {fileID: 1396887831}
+  StoryObj: {fileID: 0}
 --- !u!60 &1196211956
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -4055,7 +4059,6 @@ MonoBehaviour:
   maxidx: 4
   path: Data/Puzzle/Puzzle1
   answer: 0123
-  sprites: []
   prefab: {fileID: 6507109311626236904, guid: 8d3595789615ef944a1cc5f0a12b13e5, type: 3}
 --- !u!1 &1395802287
 GameObject:
@@ -4264,8 +4267,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d484b056229fd9342995b7ae64dfae89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isUI: 0
   spriteRenderer: {fileID: 0}
-  sprite: {fileID: 0}
 --- !u!114 &1396425507
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5691,6 +5694,7 @@ MonoBehaviour:
   etc: 1
   dontDeactivate: 0
   MainObj: {fileID: 1396887831}
+  StoryObj: {fileID: 0}
 --- !u!60 &1796299305
 PolygonCollider2D:
   m_ObjectHideFlags: 0
