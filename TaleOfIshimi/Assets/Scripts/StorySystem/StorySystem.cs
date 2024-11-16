@@ -51,20 +51,19 @@ public class StorySystem : MonoBehaviour
 
         // 스크립트 라인 수 가져오기
         IDbCommand stageCommand = DBManager.dbManager.dbConnection.CreateCommand();
-        //dbCommand.CommandText = "SELECT * FROM "+Const.STAGE_TABLE+" WHERE stage_id = "+StageManager.stageManager.GetStageNum().ToString();
-        stageCommand.CommandText = "SELECT * FROM "+Const.STAGE_TABLE+" WHERE stage_id = 0";
+        stageCommand.CommandText = "SELECT * FROM "+Const.STAGE_TABLE+" WHERE stage_id = "+StageManager.stageManager.GetStageNum().ToString();
         IDataReader stageReader = stageCommand.ExecuteReader();
         while(stageReader.Read()){
             storyMax = stageReader.GetInt32(Const.STAGE_ATTRIBUTE["story_max"]);
         }
-        storyObject = new StoryObject(storyMax);
+        storyObject = new StoryObject();
         stageReader.Close();
         stageCommand.Dispose();
         
         // 스토리 스크립트 가져오기
         //dbCommand.CommandText = "SELECT * FROM " + Const.STORY_TABLE+" WHERE stage_id = "+StageManager.stageManager.GetStageNum().ToString();
         IDbCommand scriptCommand = DBManager.dbManager.dbConnection.CreateCommand();
-        scriptCommand.CommandText = "SELECT * FROM " + Const.STORY_TABLE+" WHERE stage_id = 0";
+        scriptCommand.CommandText = "SELECT * FROM " + Const.STORY_TABLE+" WHERE stage_id = "+StageManager.stageManager.GetStageNum().ToString();
         IDataReader dataReader = scriptCommand.ExecuteReader();
 
         while(dataReader.Read()){
@@ -165,7 +164,7 @@ public class StorySystem : MonoBehaviour
         else{
             currIdx++;
         }
-        if(currIdx<storyObject.GetScriptLen()){
+        if(currIdx<storyMax){
             SetConv(currIdx);
         }
         else{
