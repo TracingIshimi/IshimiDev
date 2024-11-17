@@ -179,7 +179,7 @@ public class StorySystem : MonoBehaviour
         SetConv(currIdx);   
     }
     
-    void SetConv(int n){
+    public void SetConv(int n){
         convWin.SetActive(true);
 
         bgImage.color = Color.white;

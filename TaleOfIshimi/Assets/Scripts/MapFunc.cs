@@ -120,7 +120,7 @@ public class MapFunc : MonoBehaviour, IPointerClickHandler
             scrptId = int.Parse(thisEtc[0]);
             etc = thisEtc[0]+"_"+thisEtc[1]+"_1";
         }
-        StoryObj.ChoiceButton(scrptId);
+        StoryObj.SetConv(scrptId);
     }
 
     void SpiritActivate(){
