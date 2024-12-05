@@ -87,7 +87,7 @@ public class MapFunc : MonoBehaviour, IPointerClickHandler
         }
         string[] invenEtc = invenItem.getEtc().Split('_');
         if( invenItem.getId() == target && int.Parse(invenEtc[0]) == id){
-            Inventory.imanager.DeleteItem(target);
+            Inventory.imanager.DeleteItem(invenTarget);
             Inventory.imanager.ResetTarget();
             etc = "";
             for(int i = 2; i<thisEtc.Length; i++){
@@ -163,7 +163,8 @@ public class MapFunc : MonoBehaviour, IPointerClickHandler
     }
 
     void SpiritActivate(){
-        Inventory.imanager.spCam.SetSpResolution();
+        // 메인오브젝트에 SpModeManager를 둘 것
+        MainObj.SetActive(true);
     }
 
     void Update(){

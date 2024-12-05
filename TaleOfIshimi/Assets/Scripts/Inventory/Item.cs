@@ -31,7 +31,7 @@ public class Item
     InteractionType ParseType(string type){
         InteractionType tmpType = 0;
         switch(type){
-            case "get only":
+            case "get_only":
                 tmpType = InteractionType.GET_ONLY;
                 break;
             case "change":

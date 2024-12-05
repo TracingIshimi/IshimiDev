@@ -8,7 +8,7 @@ using UnityEngine.Rendering;
 public class SpiritCamera : MonoBehaviour
 {
     [SerializeField] Camera objCam;
-    void Start()
+    void Awake()
     {
         SetIidleResolution();
     }

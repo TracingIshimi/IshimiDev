@@ -9,14 +9,14 @@ public class Inventory : MonoBehaviour
 {
     public static Inventory imanager;
 
-    private Item[] inventory = new Item[Const.ITEM_MAX_IDX];
+    private Item[] inventory = new Item[Const.INVEN_MAX_IDX];
     private Item[] puzzleItems = new Item[Const.ITEM_MAX_IDX];
     private int nextIdx = 0;
     private int target = -1;
 
     public ItemSlot[] itemSlots = new ItemSlot[6];
     [SerializeField] TextMeshProUGUI itemText;
-    [SerializeField] public SpiritCamera spCam;
+    [SerializeField] GameObject spManager;
 
 
 /////////////////////// Manager 객체 초기화 ///////////////////////
@@ -156,8 +156,13 @@ public class Inventory : MonoBehaviour
         }
 
         InteractionType slotType = itemSlots[slotId].GetItem().getItemType();
-
+        Debug.Log(slotType);
         switch(slotType){
+            case InteractionType.GET_ONLY:
+                if(target==slotId){
+                    return;
+                }
+                break;
             case InteractionType.ADDWITH_MAP:
                 break;
             case InteractionType.ADDWITH_ITEM:
@@ -168,10 +173,10 @@ public class Inventory : MonoBehaviour
                 break;
             case InteractionType.SPSIGHT:
                 if(target==slotId){
-                    spCam.SetSpResolution();
-                    //추가 SPsight 관련 함수들(스테이지별 관리);
                     ResetTarget();
                     DeleteItem(slotId);
+                    spManager.SetActive(true);
+                    return;
                 }
                 break;
             case InteractionType.DIRECT_USE:
@@ -180,7 +185,7 @@ public class Inventory : MonoBehaviour
         }
 
         // 아이템 사용
-        if(target == slotId){
+        if(target == slotId && slotType==InteractionType.DIRECT_USE){
             Debug.Log("Use Item: "+inventory[slotId].getName());
             ResetTarget();
             DeleteItem(slotId);
@@ -197,7 +202,7 @@ public class Inventory : MonoBehaviour
     }
 
     public void SetItemTextTarget(){
-        if(target<0){
+        if(target<0 || inventory[target]==null){
             itemText.text = "";
         }
         else{
