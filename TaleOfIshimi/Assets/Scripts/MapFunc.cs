@@ -17,6 +17,15 @@ public class MapFunc : MonoBehaviour, IPointerClickHandler
     int spriteIdx = 0;
     int maxIdx = 0;
 
+    private float moveFlag = 0;
+
+    private float dy = 0;
+    private float dx = 0;
+    private float orgX;
+    private float orgY;
+    private float moveSpeed = 0;
+    private bool isMoved=false;
+
     void Start(){
         if(interType[0]=="ChangeForm"){
             maxIdx = transform.childCount;
@@ -78,7 +87,7 @@ public class MapFunc : MonoBehaviour, IPointerClickHandler
         }
         string[] invenEtc = invenItem.getEtc().Split('_');
         if( invenItem.getId() == target && int.Parse(invenEtc[0]) == id){
-            Inventory.imanager.DeleteItem(target);
+            Inventory.imanager.DeleteItem(invenTarget);
             Inventory.imanager.ResetTarget();
             etc = "";
             for(int i = 2; i<thisEtc.Length; i++){
@@ -106,7 +115,37 @@ public class MapFunc : MonoBehaviour, IPointerClickHandler
     }
 
     void ActivateObj(){
-        MainObj.transform.GetChild(int.Parse(etc)).gameObject.SetActive(true);
+        MainObj.gameObject.SetActive(true);
+    }
+
+    void changePosition(){
+        if(isMoved&&etc.Split('_')[3]=="1"){
+            toOrgPosition();
+            return;
+        }
+        Debug.Log("changPosition call");
+        // etc 형식: dx_dy_moveSpeed_toOrg
+        string[] thisEtc = etc.Split('_');
+        dx = float.Parse(thisEtc[0]);
+        dy = float.Parse(thisEtc[1]);
+        moveSpeed = float.Parse(thisEtc[2]);
+        orgX = transform.position.x;
+        orgY = transform.position.y;
+        moveFlag = moveSpeed;
+        isMoved = true;
+    }
+
+    void toOrgPosition(){
+        if(!isMoved){
+            return;
+        }
+        Debug.Log("toOrgPosition call");
+        dx = orgX-transform.position.x;
+        dy = orgY-transform.position.y;
+        orgX = transform.position.x;
+        orgY = transform.position.y;
+        moveFlag = moveSpeed;
+        isMoved = false;
     }
 
     void SetConv(){
@@ -124,6 +163,21 @@ public class MapFunc : MonoBehaviour, IPointerClickHandler
     }
 
     void SpiritActivate(){
-        Inventory.imanager.spCam.SetSpResolution();
+        // 메인오브젝트에 SpModeManager를 둘 것
+        MainObj.SetActive(true);
+    }
+
+    void Update(){
+        if(moveFlag>0){
+            Debug.Log(moveFlag+"\t"+isMoved);
+            float tmpX = transform.position.x + dx/moveSpeed*Time.deltaTime;
+            float tmpY = transform.position.y + dy/moveSpeed*Time.deltaTime;
+            transform.position = new Vector3(tmpX,tmpY,0);
+            moveFlag-=Time.deltaTime;
+        }
+        else if(moveFlag<0){
+            transform.position = new Vector3(orgX+dx,orgY+dy,0);
+            moveFlag = 0;
+        }
     }
 }

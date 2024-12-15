@@ -10,6 +10,7 @@ public class PWDPuzzle : MonoBehaviour
     public string path = "Data/Puzzle/";
     public string answer;
     public PWDPrefab prefab;
+    [SerializeField] GameObject clearObj;
     PWDPrefab[] slots;
     int[] currPwd = new int[5];
     void Start()
@@ -58,6 +59,8 @@ public class PWDPuzzle : MonoBehaviour
         }
         if(pwString == answer.Trim()){
             Debug.Log("Password Correct: "+answer);
+            clearObj.gameObject.SetActive(true);
+            gameObject.SetActive(false);
         }
         else{
             Debug.Log("Password Wrong: "+pwString+"\t Answer: "+answer);

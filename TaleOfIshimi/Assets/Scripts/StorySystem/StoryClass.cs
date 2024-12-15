@@ -1,16 +1,15 @@
-    class StoryObject{
-        public SingleScript[] scripts;
-        public StoryObject(int num){
-            scripts = new SingleScript[num];
+using System.Collections.Generic;
+
+class StoryObject{
+        Dictionary<int,SingleScript> scripts;
+        public StoryObject(){
+            scripts = new Dictionary<int, SingleScript>();
         }
         public void SetScript(int n, SingleScript singleObj){
-            scripts[n] = singleObj;
+            scripts.Add(n,singleObj);
         }
         public SingleScript GetScript(int n){
             return scripts[n];
-        }
-        public int GetScriptLen(){
-            return scripts.Length;
         }
     }
     

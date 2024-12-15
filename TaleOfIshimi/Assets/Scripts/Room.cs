@@ -31,4 +31,11 @@ public class Room : MonoBehaviour
         }
     }
 
+    void Start(){
+        roomSides[0].gameObject.SetActive(true);
+        for(int i = 1; i<roomSides.Length; i++){
+            roomSides[i].gameObject.SetActive(false);
+        }
+    }
+
 }

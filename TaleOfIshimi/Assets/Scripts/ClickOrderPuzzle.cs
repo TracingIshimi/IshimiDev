@@ -6,10 +6,17 @@ using System;
 public class ClickOrderPuzzle : MonoBehaviour, IPointerClickHandler
 {
     public int id;
+    public int matchId=-1;
     private int answer = 231;
     private int output = 0;
 
+    [SerializeField] GameObject[] deactivateItems;
+    [SerializeField] GameObject[] activateItems;
+
     public void MakeAFire(int id) {
+        if(Inventory.imanager.GetTarget()<0||Inventory.imanager.GetSlotItem(Inventory.imanager.GetTarget()).getId()!=matchId){
+            return;
+        }
         Room.room.fire[id-1].SetActive(true);
     }
 
@@ -33,6 +40,7 @@ public class ClickOrderPuzzle : MonoBehaviour, IPointerClickHandler
                 output = Room.room.clickInput[0]*100 + Room.room.clickInput[1]*10 + Room.room.clickInput[2]; 
 
                 if (output == answer) {
+                    ClearFunc();
                     return;
                 }
 
@@ -49,6 +57,15 @@ public class ClickOrderPuzzle : MonoBehaviour, IPointerClickHandler
             return;
         }
         
+    }
+
+    void ClearFunc(){
+        for(int i = 0; i<deactivateItems.Length; i++){
+            deactivateItems[i].gameObject.SetActive(false);
+        }
+        for(int j = 0; j<activateItems.Length; j++){
+            activateItems[j].gameObject.SetActive(true);
+        }
     }
     
 
