@@ -491,7 +491,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &132544544
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3611,6 +3611,7 @@ MonoBehaviour:
   etc: 
   dontDeactivate: 0
   MainObj: {fileID: 0}
+  StoryObj: {fileID: 0}
 --- !u!1 &1308009606
 GameObject:
   m_ObjectHideFlags: 0
@@ -3627,7 +3628,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1308009607
 SpriteRenderer:
   m_ObjectHideFlags: 0

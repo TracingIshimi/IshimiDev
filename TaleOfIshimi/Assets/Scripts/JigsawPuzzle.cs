@@ -5,7 +5,8 @@ using UnityEngine.EventSystems;
 
 public class JigsawPuzzle : MonoBehaviour, IEndDragHandler, IDragHandler
 {
-    public Transform target;
+    // public Transform target;
+    public GameObject target;
 	
     void IDragHandler.OnDrag(PointerEventData eventData)
     {
@@ -22,9 +23,16 @@ public class JigsawPuzzle : MonoBehaviour, IEndDragHandler, IDragHandler
     }
 
 
+    // void Snap() {
+    //     if(Vector3.Distance(target.position, transform.position) < 1f) {
+    //         transform.position = new Vector3(target.position.x, target.position.y);
+    //     }
+    // }
+
     void Snap() {
-        if(Vector3.Distance(target.position, transform.position) < 1f) {
-            transform.position = new Vector3(target.position.x, target.position.y);
+        if(Vector3.Distance(target.transform.position, transform.position) < 1f) {
+            target.SetActive(true);
+            gameObject.SetActive(false);
         }
     }
 
