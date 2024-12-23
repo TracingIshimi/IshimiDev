@@ -22,7 +22,7 @@ public class Lighting : MonoBehaviour
     }
 
     private void Update(){
-        Debug.Log(lightup);
+        //Debug.Log(lightup);
         if(lightup){
             lightobj.falloffIntensity+=Time.deltaTime*interval/timegap;
             if(lightobj.falloffIntensity>=lightMax){
