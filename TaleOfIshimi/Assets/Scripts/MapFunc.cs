@@ -65,7 +65,7 @@ public class MapFunc : MonoBehaviour, IPointerClickHandler
         }
         string[] invenEtc = invenItem.getEtc().Split('_');
         if( invenItem.getId() == target && int.Parse(invenEtc[0]) == id){
-            Inventory.imanager.DeleteItem(target);
+            Inventory.imanager.DeleteItem(invenTarget);
             Inventory.imanager.AddItem(result);
             Inventory.imanager.ResetTarget();
             DeactivateSelf();
