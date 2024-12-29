@@ -19,18 +19,6 @@ public class Room : MonoBehaviour
         roomSides[currentRoomIndex].SetActive(true);
     }
 
-    public static Room room;
-    public int clickNum = 0;
-    public int[] clickInput = new int[3];
-    public int[] isClickedAlready = new int[3];
-    public GameObject[] fire;
-
-    private void Awake() {
-        if(Room.room == null) {
-            Room.room = this;
-        }
-    }
-
     void Start(){
         roomSides[0].gameObject.SetActive(true);
         for(int i = 1; i<roomSides.Length; i++){
