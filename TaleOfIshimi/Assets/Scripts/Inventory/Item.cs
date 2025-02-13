@@ -6,7 +6,8 @@ public enum InteractionType {
     CHANGE,
     ADDWITH_ITEM,
     ADDWITH_MAP,
-    SPSIGHT
+    SPSIGHT,
+    CONV
 };
 
 public class Item
@@ -45,6 +46,9 @@ public class Item
                 break;
             case "spsight":
                 tmpType = InteractionType.SPSIGHT;
+                break;
+            case "conv":
+                tmpType = InteractionType.CONV;
                 break;
             case "direct use":
             default:

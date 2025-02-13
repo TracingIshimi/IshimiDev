@@ -17,6 +17,7 @@ public class Inventory : MonoBehaviour
     public ItemSlot[] itemSlots = new ItemSlot[6];
     [SerializeField] TextMeshProUGUI itemText;
     [SerializeField] GameObject spManager;
+    [SerializeField] StorySystem conv;
 
 
 /////////////////////// Manager 객체 초기화 ///////////////////////
@@ -176,6 +177,13 @@ public class Inventory : MonoBehaviour
                     ResetTarget();
                     DeleteItem(slotId);
                     spManager.SetActive(true);
+                    return;
+                }
+                break;
+            case InteractionType.CONV:
+                if(target==slotId){
+                    int convId = int.Parse(itemSlots[target].GetItem().getEtc());
+                    conv.SetConv(convId);
                     return;
                 }
                 break;
