@@ -12,8 +12,6 @@ public class AnimalPuzzle : MonoBehaviour
     [SerializeField] GameObject peiceObj;
     [SerializeField] AnimalObj piecePrefab;
     [SerializeField] AnimalSlot slotPrefab;
-
-    [SerializeField] GameObject clearActive; 
     
     private AnimalObj[] pieces;
     private AnimalSlot[] slots;
@@ -92,24 +90,9 @@ public class AnimalPuzzle : MonoBehaviour
         }
         if(currAns==pwAnswer){
             Debug.Log("PW correct: "+pwAnswer);
-            clearActive.SetActive(true);
         }
         else{
             Debug.Log("PW wrong: "+currAns);
-            Invoke("ResetPuzzle",0.3f);
-        }
-    }
-
-    public void ResetPuzzle(){
-        for(int i = 0; i<slots.Length;i++){
-            int pieceIdx = slots[i].GetPieceIdx();
-            if(pieceIdx<0){
-                continue;
-            }
-            pieces[pieceIdx].gameObject.SetActive(true);
-            pieces[pieceIdx].DeselectPiece();
-            slots[i].ClearSlot();
-            currPW[i] = -1;
         }
     }
 
@@ -124,5 +107,4 @@ public class AnimalPuzzle : MonoBehaviour
     public string GetPath(){
         return imgPath;
     }
-
 }
