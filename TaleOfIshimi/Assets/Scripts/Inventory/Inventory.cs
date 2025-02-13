@@ -260,4 +260,13 @@ public class Inventory : MonoBehaviour
     public Item GetSlotItem(int idx){
         return itemSlots[idx].GetItem();
     }
+
+    public bool FindInven(int idx){
+        for(int i = 0; i<itemSlots.Length; i++){
+            if(itemSlots[i].GetItem().getId()==idx){
+                return true;
+            }
+        }
+        return false;
+    }
 }
