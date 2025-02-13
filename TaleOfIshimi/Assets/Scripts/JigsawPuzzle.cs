@@ -3,59 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class JigsawPuzzle : MonoBehaviour
+public class JigsawPuzzle : MonoBehaviour, IEndDragHandler, IDragHandler
 {
-    public static JigsawPuzzle jigsawPuzzle;
-    public int maxidx;
-    public int[] answer;
-    public RectTransform[] target;
+    // public Transform target;
+    public GameObject target;
+	
+    void IDragHandler.OnDrag(PointerEventData eventData)
+    {
+    	float distance = Camera.main.WorldToScreenPoint(transform.position).z;
 
-    private void Awake(){
-        if(jigsawPuzzle == null){
-            jigsawPuzzle = this;
-        }
-        else if(jigsawPuzzle != this){
-            Destroy(this);
-            return;
-        }
+        Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
+        Vector3 objPos = Camera.main.ScreenToWorldPoint(mousePos);
 
-        answer = new int[maxidx];
+        transform.position = objPos;
+    }
+
+    void IEndDragHandler.OnEndDrag(PointerEventData eventData) {
+        Snap();
     }
 
 
-    // public void Snap(Transform obj) {
-    //     for (int i = 0; i<maxidx; i++) {
-    //         if(Vector3.Distance(target[i].transform.position, obj.position) < 1f) {
-    //             obj.position = new Vector3(target[i].transform.position.x, target[i].transform.position.y);
-    //         }
+    // void Snap() {
+    //     if(Vector3.Distance(target.position, transform.position) < 1f) {
+    //         transform.position = new Vector3(target.position.x, target.position.y);
     //     }
     // }
 
-    public void Snap(RectTransform rectTransform) {
-        for (int i = 0; i<maxidx; i++) {
-            if (Vector2.Distance(target[i].anchoredPosition, rectTransform.anchoredPosition) < 50f) {
-                rectTransform.anchoredPosition = target[i].anchoredPosition;
-            }
+    void Snap() {
+        if(Vector3.Distance(target.transform.position, transform.position) < 1f) {
+            target.SetActive(true);
+            gameObject.SetActive(false);
         }
     }
-
-    public void IsRightPos(RectTransform rectTransform, RectTransform target, int idx) {
-        if (rectTransform.anchoredPosition == target.anchoredPosition) {
-            answer[idx] = 1;
-        }
-        else {
-            return;
-        }
-    }
-
-    public void CheckAnswer() {
-        for (int i = 0; i<maxidx; i++) {
-            if(answer[i] == 0) {
-                return;
-            }
-        }
-        Debug.Log("Right Answer");
-    }
-
 
 }
