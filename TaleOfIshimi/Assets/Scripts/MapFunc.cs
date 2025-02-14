@@ -7,6 +7,7 @@ public class MapFunc : MonoBehaviour, IPointerClickHandler
 {
     public int id;
     public string[] interType = {"Default"};
+    public string constraint = "";
     public string etc = "";
 
     public bool dontDeactivate = false;
@@ -37,10 +38,32 @@ public class MapFunc : MonoBehaviour, IPointerClickHandler
     }
 
     public void OnPointerClick(PointerEventData eventData){
+        if(constraint!=""){
+            string[] tmp = constraint.Split();
+            for(int i = 0; i<tmp.Length; i+=2){
+                if(!CheckConstraint(tmp[i],tmp[i+1])){
+                    return;
+                }
+            }
+
+        }
         for(int i = 0; i<interType.Length; i++){
             Debug.Log(interType[i]);
             Invoke(interType[i],0f);
         }
+    }
+
+    bool CheckConstraint(string type, string constraint){
+        switch(type){
+            case "have_item":
+                if(Inventory.imanager.FindInven(int.Parse(constraint))){
+                    return true;
+                }
+                break;
+            default:
+                break;
+        }
+        return false;
     }
 
     void Default(){
