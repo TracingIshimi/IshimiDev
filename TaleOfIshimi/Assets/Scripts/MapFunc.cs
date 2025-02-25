@@ -141,6 +141,10 @@ public class MapFunc : MonoBehaviour, IPointerClickHandler
         MainObj.gameObject.SetActive(true);
     }
 
+    void DeactivateObj(){
+        MainObj.gameObject.SetActive(false);
+    }
+
     void changePosition(){
         if(isMoved&&etc.Split('_')[3]=="1"){
             toOrgPosition();

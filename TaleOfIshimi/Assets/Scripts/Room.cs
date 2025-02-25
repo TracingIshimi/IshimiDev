@@ -19,6 +19,16 @@ public class Room : MonoBehaviour
         roomSides[currentRoomIndex].SetActive(true);
     }
 
+    public void MoveToNum(int num){
+        roomSides[currentRoomIndex].SetActive(false);
+        currentRoomIndex = num;
+        roomSides[currentRoomIndex].SetActive(false);
+    }
+
+    public void ExitRoom(){
+        roomSides[currentRoomIndex].SetActive(false);
+    }
+
     void Start(){
         roomSides[0].gameObject.SetActive(true);
         for(int i = 1; i<roomSides.Length; i++){
