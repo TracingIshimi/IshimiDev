@@ -187,6 +187,9 @@ public class Inventory : MonoBehaviour
                     return;
                 }
                 break;
+            case InteractionType.READ:
+                //팝업 기능 채우기
+                break;
             case InteractionType.DIRECT_USE:
             default:
                 break;

@@ -7,7 +7,8 @@ public enum InteractionType {
     ADDWITH_ITEM,
     ADDWITH_MAP,
     SPSIGHT,
-    CONV
+    CONV,
+    READ
 };
 
 public class Item
@@ -49,6 +50,9 @@ public class Item
                 break;
             case "conv":
                 tmpType = InteractionType.CONV;
+                break;
+            case "read":
+                tmpType = InteractionType.READ;
                 break;
             case "direct use":
             default:
