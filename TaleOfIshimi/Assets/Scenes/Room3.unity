@@ -7320,6 +7320,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1633074963}
   - component: {fileID: 1633074964}
+  - component: {fileID: 1633074965}
   m_Layer: 0
   m_Name: SPmanager
   m_TagString: Untagged
@@ -7364,6 +7365,19 @@ MonoBehaviour:
   - {fileID: 855339733}
   - {fileID: 1109255264}
   shader: {fileID: 2145376256}
+--- !u!114 &1633074965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633074961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04322bdf02d43b24c82ca45e4b1ed2c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fullscreenMaterial: {fileID: 2100000, guid: 0403daf43eef1fb428637157eddf3a30, type: 2}
 --- !u!1 &1653410812
 GameObject:
   m_ObjectHideFlags: 0
