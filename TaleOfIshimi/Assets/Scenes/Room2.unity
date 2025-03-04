@@ -1226,7 +1226,7 @@ GameObject:
   - component: {fileID: 273002457}
   - component: {fileID: 273002456}
   - component: {fileID: 273002459}
-  - component: {fileID: 273002458}
+  - component: {fileID: 273002460}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -1291,20 +1291,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 273002454}
   m_CullTransparentMesh: 1
---- !u!114 &273002458
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 273002454}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e7761e43228f54499fe22beb2b30059, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 450433853}
-  idx: 0
 --- !u!60 &273002459
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -1377,6 +1363,20 @@ PolygonCollider2D:
       - {x: 108.272446, y: 93.9793}
       - {x: -107.29232, y: 94.458176}
   m_UseDelaunayMesh: 0
+--- !u!114 &273002460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 273002454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 353411aad663d4047bda58fb26aee38a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 450433853}
+  idx: 0
 --- !u!1 &287581580
 GameObject:
   m_ObjectHideFlags: 0
@@ -1436,6 +1436,7 @@ MonoBehaviour:
   - {fileID: 1283552632}
   itemText: {fileID: 1882687175}
   spManager: {fileID: 1233565509}
+  conv: {fileID: 0}
 --- !u!224 &306804603 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 299695817564420975, guid: acae7c2efb053da4390f693bf1005c57, type: 3}
@@ -1714,6 +1715,7 @@ MonoBehaviour:
   interType:
   - ActivateObj
   - DeactivateSelf
+  constraint: 
   etc: 
   dontDeactivate: 0
   MainObj: {fileID: 1525223426}
@@ -2702,6 +2704,7 @@ MonoBehaviour:
   id: 0
   interType:
   - ActivateObj
+  constraint: 
   etc: 
   dontDeactivate: 0
   MainObj: {fileID: 1251229387}
@@ -2819,7 +2822,7 @@ GameObject:
   - component: {fileID: 535567635}
   - component: {fileID: 535567634}
   - component: {fileID: 535567637}
-  - component: {fileID: 535567636}
+  - component: {fileID: 535567638}
   m_Layer: 5
   m_Name: Image (3)
   m_TagString: Untagged
@@ -2884,20 +2887,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 535567632}
   m_CullTransparentMesh: 1
---- !u!114 &535567636
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 535567632}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e7761e43228f54499fe22beb2b30059, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 1631781230}
-  idx: 3
 --- !u!60 &535567637
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -2986,6 +2975,20 @@ PolygonCollider2D:
       - {x: 134.04471, y: -70.22944}
       - {x: -82.43897, y: -69.51358}
   m_UseDelaunayMesh: 0
+--- !u!114 &535567638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 535567632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 353411aad663d4047bda58fb26aee38a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 1631781230}
+  idx: 3
 --- !u!1 &567423380
 GameObject:
   m_ObjectHideFlags: 0
@@ -3127,6 +3130,7 @@ MonoBehaviour:
   interType:
   - ObtainItem
   - DeactivateSelf
+  constraint: 
   etc: 3
   dontDeactivate: 0
   MainObj: {fileID: 0}
@@ -3935,7 +3939,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &809146996
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3985,7 +3989,7 @@ GameObject:
   - component: {fileID: 839148511}
   - component: {fileID: 839148510}
   - component: {fileID: 839148513}
-  - component: {fileID: 839148512}
+  - component: {fileID: 839148514}
   m_Layer: 5
   m_Name: Image (1)
   m_TagString: Untagged
@@ -4050,20 +4054,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 839148508}
   m_CullTransparentMesh: 1
---- !u!114 &839148512
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 839148508}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e7761e43228f54499fe22beb2b30059, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 1006145468}
-  idx: 1
 --- !u!60 &839148513
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -4143,6 +4133,20 @@ PolygonCollider2D:
       - {x: 141.12675, y: 90.856575}
       - {x: -78.99585, y: 90.20329}
   m_UseDelaunayMesh: 0
+--- !u!114 &839148514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 839148508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 353411aad663d4047bda58fb26aee38a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 1006145468}
+  idx: 1
 --- !u!1 &846032230
 GameObject:
   m_ObjectHideFlags: 0
@@ -4676,6 +4680,7 @@ MonoBehaviour:
   id: 0
   interType:
   - ActivateObj
+  constraint: 
   etc: 
   dontDeactivate: 0
   MainObj: {fileID: 809146995}
@@ -5309,6 +5314,7 @@ MonoBehaviour:
   interType:
   - ObtainItem
   - DeactivateSelf
+  constraint: 
   etc: 1
   dontDeactivate: 0
   MainObj: {fileID: 0}
@@ -5994,6 +6000,7 @@ MonoBehaviour:
   id: 0
   interType:
   - changePosition
+  constraint: 
   etc: 0_0.5_0.5_1
   dontDeactivate: 0
   MainObj: {fileID: 0}
@@ -6117,6 +6124,7 @@ MonoBehaviour:
   interType:
   - ObtainItem
   - DeactivateSelf
+  constraint: 
   etc: 2
   dontDeactivate: 0
   MainObj: {fileID: 0}
@@ -6429,7 +6437,7 @@ SpriteRenderer:
   m_Size: {x: 7.05, y: 2.19}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &1187407361
@@ -6776,6 +6784,7 @@ MonoBehaviour:
   id: 0
   interType:
   - ActivateObj
+  constraint: 
   etc: 
   dontDeactivate: 0
   MainObj: {fileID: 1251229387}
@@ -8082,6 +8091,7 @@ MonoBehaviour:
   id: 221
   interType:
   - SetConv
+  constraint: 
   etc: 
   dontDeactivate: 0
   MainObj: {fileID: 0}
@@ -8407,7 +8417,7 @@ SpriteRenderer:
   m_Size: {x: 7.03, y: 2.6}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &1525223430
@@ -8426,6 +8436,7 @@ MonoBehaviour:
   interType:
   - ActivateObj
   - DeactivateSelf
+  constraint: 
   etc: 
   dontDeactivate: 0
   MainObj: {fileID: 343489335}
@@ -8733,6 +8744,7 @@ MonoBehaviour:
   id: 222
   interType:
   - ActivateObj
+  constraint: 
   etc: 
   dontDeactivate: 0
   MainObj: {fileID: 1419889536}
@@ -8982,7 +8994,7 @@ GameObject:
   - component: {fileID: 1620495364}
   - component: {fileID: 1620495363}
   - component: {fileID: 1620495366}
-  - component: {fileID: 1620495365}
+  - component: {fileID: 1620495367}
   m_Layer: 5
   m_Name: Image (2)
   m_TagString: Untagged
@@ -9047,20 +9059,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1620495361}
   m_CullTransparentMesh: 1
---- !u!114 &1620495365
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1620495361}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e7761e43228f54499fe22beb2b30059, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 733673559}
-  idx: 2
 --- !u!60 &1620495366
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -9148,6 +9146,20 @@ PolygonCollider2D:
       - {x: 110.02867, y: -68.61477}
       - {x: -109.92712, y: -68.645096}
   m_UseDelaunayMesh: 0
+--- !u!114 &1620495367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1620495361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 353411aad663d4047bda58fb26aee38a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 733673559}
+  idx: 2
 --- !u!1 &1631781229
 GameObject:
   m_ObjectHideFlags: 0
@@ -10647,6 +10659,7 @@ MonoBehaviour:
   id: 0
   interType:
   - ActivateObj
+  constraint: 
   etc: 
   dontDeactivate: 0
   MainObj: {fileID: 809146995}
@@ -11322,6 +11335,7 @@ MonoBehaviour:
   interType:
   - ObtainItem
   - DeactivateSelf
+  constraint: 
   etc: 0
   dontDeactivate: 0
   MainObj: {fileID: 0}
